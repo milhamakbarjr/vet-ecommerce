@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetSehat — Product Requirements Document (v1.0)</title>
+<style>
+  :root {
+    --primary: oklch(0.598 0.155 28.8);
+    --primary-soft: oklch(0.93 0.05 28.8);
+    --primary-ink: oklch(0.42 0.13 28.8);
+    --accent: oklch(0.855 0.12 88);
+    --accent-soft: oklch(0.96 0.045 88);
+    --accent-ink: oklch(0.52 0.1 80);
+    --surface: oklch(0.985 0.006 80);
+    --surface-2: oklch(0.965 0.012 78);
+    --card: #ffffff;
+    --border: oklch(0.9 0.012 75);
+    --foreground: oklch(0.27 0.02 50);
+    --muted-foreground: oklch(0.52 0.02 55);
+    --p0-bg: oklch(0.93 0.06 28);
+    --p0-ink: oklch(0.45 0.16 28);
+    --p1-bg: oklch(0.94 0.05 80);
+    --p1-ink: oklch(0.48 0.1 70);
+    --mock-bg: oklch(0.97 0.035 88);
+    --mock-border: oklch(0.82 0.1 86);
+    --shadow: 0 1px 2px rgba(60, 40, 20, 0.05), 0 8px 24px -12px rgba(60, 40, 20, 0.12);
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--foreground);
+    background: var(--surface);
+    line-height: 1.65;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Layout ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 0;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 28px 20px 40px;
+    border-right: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+
+  .toc-brand {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+
+  .toc-brand span { color: var(--accent-ink); }
+
+  .toc-sub {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted-foreground);
+    margin-bottom: 22px;
+  }
+
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc li { counter-increment: toc; }
+
+  .toc a {
+    display: flex;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    color: var(--muted-foreground);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .toc a::before {
+    content: counter(toc);
+    flex: 0 0 20px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--primary);
+    opacity: 0.75;
+  }
+
+  .toc a:hover {
+    background: var(--primary-soft);
+    color: var(--primary-ink);
+  }
+
+  main {
+    padding: 0 clamp(20px, 4vw, 64px) 96px;
+    min-width: 0;
+  }
+
+  /* ---------- Hero / doc header ---------- */
+  .hero {
+    padding: 64px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    color: var(--foreground);
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--primary);
+  }
+
+  .hero .lede {
+    font-size: 1.15rem;
+    color: var(--muted-foreground);
+    max-width: 60ch;
+    margin: 0 0 32px;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .meta-grid div {
+    background: var(--card);
+    padding: 14px 18px;
+  }
+
+  .meta-grid dt {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted-foreground);
+    margin-bottom: 4px;
+  }
+
+  .meta-grid dd {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* ---------- Sections ---------- */
+  .section {
+    padding: 16px 0 44px;
+    margin-bottom: 8px;
+    scroll-margin-top: 24px;
+    counter-increment: section;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 3.2vw, 2rem);
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    margin: 0 0 24px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+
+  .section h3 {
+    font-size: 1.1rem;
+    margin: 0 0 10px;
+    color: var(--foreground);
+  }
+
+  .section p { margin: 0 0 14px; }
+  .section p:last-child { margin-bottom: 0; }
+
+  .section ul, .section ol { margin: 0 0 14px; padding-left: 22px; }
+  .section li { margin-bottom: 8px; }
+
+  code {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+    font-size: 0.85em;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 5px;
+    color: var(--primary-ink);
+  }
+
+  /* ---------- Cards & grids ---------- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .grid-2, .grid-3 {
+    display: grid;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .grid-2 > .card, .grid-3 > .card, .grid-2 > .persona, .grid-3 > .persona { margin-bottom: 0; }
+
+  /* ---------- Callout ---------- */
+  .callout {
+    background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
+    border: 1px solid var(--mock-border);
+    border-left: 4px solid var(--primary);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    font-size: 1.02rem;
+    color: var(--foreground);
+  }
+
+  /* ---------- Mock note ---------- */
+  .note-mock {
+    background: var(--mock-bg);
+    border: 1px dashed var(--mock-border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-top: 14px;
+    font-size: 0.88rem;
+    color: var(--accent-ink);
+  }
+  .note-mock strong { color: var(--primary-ink); }
+  .note-mock code { background: rgba(255,255,255,0.6); }
+
+  /* ---------- Tags ---------- */
+  .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .tag.p0 { background: var(--p0-bg); color: var(--p0-ink); }
+  .tag.p1 { background: var(--p1-bg); color: var(--p1-ink); }
+
+  /* ---------- KPI ---------- */
+  .kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: left;
+    box-shadow: var(--shadow);
+  }
+  .kpi-value {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .kpi-label {
+    font-size: 0.82rem;
+    color: var(--muted-foreground);
+  }
+
+  /* ---------- Persona ---------- */
+  .persona {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--accent);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+  .persona-name {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .persona-role {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted-foreground);
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .persona-detail { font-size: 0.9rem; margin-bottom: 10px; }
+  .persona-detail strong { color: var(--primary-ink); }
+
+  /* ---------- Tables ---------- */
+  .tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 4px 0 6px;
+  }
+  .tbl thead th {
+    background: var(--primary);
+    color: #fff;
+    text-align: left;
+    padding: 11px 14px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
+  }
+  .tbl thead th:first-child { border-top-left-radius: 10px; }
+  .tbl thead th:last-child { border-top-right-radius: 10px; }
+  .tbl tbody td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .tbl tbody tr:nth-child(even) { background: var(--surface-2); }
+  .tbl tbody tr:hover { background: var(--accent-soft); }
+
+  /* ---------- Roadmap phases ---------- */
+  .phase-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 0;
+    margin-bottom: 18px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .phase-label {
+    background: var(--primary);
+    color: #fff;
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 14px 24px;
+  }
+  .phase-items { padding: 22px 24px; }
+  .phase-items ul { padding-left: 20px; }
+
+  /* ---------- Footer ---------- */
+  .doc-footer {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted-foreground);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+    .toc {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .toc ol {
+      columns: 2;
+      column-gap: 12px;
+    }
+    main { padding: 0 20px 64px; }
+    .hero { padding: 36px 0 28px; }
+  }
+
+  @media print {
+    .toc { display: none; }
+    .shell { display: block; }
+    .card, .persona, .kpi, .phase-block { box-shadow: none; }
+    .section { page-break-inside: avoid; }
+    body { font-size: 11pt; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ===================== TOC ===================== -->
+  <nav class="toc">
+    <div class="toc-brand">Pet<span>Sehat</span></div>
+    <div class="toc-sub">PRD · v1.0 Draft</div>
+    <ol>
+      <li><a href="#exec-summary">Executive Summary</a></li>
+      <li><a href="#problem">Problem Statement</a></li>
+      <li><a href="#goals">Goals &amp; Non-Goals</a></li>
+      <li><a href="#personas">Customers &amp; Personas</a></li>
+      <li><a href="#market">Market &amp; Competition</a></li>
+      <li><a href="#value-prop">Value Proposition</a></li>
+      <li><a href="#business-model">Business Model</a></li>
+      <li><a href="#metrics">Success Metrics</a></li>
+      <li><a href="#scope">Scope — v1 Features</a></li>
+      <li><a href="#out-of-scope">Out of Scope</a></li>
+      <li><a href="#user-journeys">User Journeys</a></li>
+      <li><a href="#functional-reqs">Functional Requirements</a></li>
+      <li><a href="#nfr">Non-Functional Requirements</a></li>
+      <li><a href="#tech-approach">Technical Approach</a></li>
+      <li><a href="#roadmap">Release Plan &amp; Roadmap</a></li>
+      <li><a href="#risks">Risks &amp; Mitigations</a></li>
+      <li><a href="#open-questions">Open Questions</a></li>
+      <li><a href="#appendix">Appendix</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================== MAIN ===================== -->
+  <main>
+
+    <!-- Hero / doc meta -->
+    <header class="hero" id="doc-header">
+      <span class="eyebrow">Product Requirements Document</span>
+      <h1>PetSehat — Indonesia's <em>vet-backed</em> pet ecommerce</h1>
+      <p class="lede">Where pet owners buy food, health products, and supplies with confidence, because real veterinary expertise is built into every page. Free advice earns trust; trust drives repeat purchase.</p>
+      <dl class="meta-grid">
+        <div><dt>Version</dt><dd>1.0 (Draft)</dd></div>
+        <div><dt>Date</dt><dd>23 May 2026</dd></div>
+        <div><dt>Author</dt><dd>Principal PM</dd></div>
+        <div><dt>Market</dt><dd>Indonesia</dd></div>
+        <div><dt>Platform</dt><dd>Responsive Web</dd></div>
+        <div><dt>Status</dt><dd><span class="status-dot"></span>In Review</dd></div>
+      </dl>
+    </header>
+
+    <!-- ===== Strategy (Agent A) ===== -->
+<section id="exec-summary" class="section">
+  <h2 class="section-title">Executive Summary</h2>
+  <div class="card">
+    <p>PetSehat is Indonesia's first vet-backed pet ecommerce platform — built on the belief that pet owners make better decisions, and buy with more confidence, when real veterinary knowledge is woven into every part of the shopping experience. We sell food, health products, and everyday supplies for cats, dogs, rabbits, and more, and we back every product page with free, expert-reviewed guidance so that a first-time cat owner in Jakarta and a seasoned multi-pet household in Surabaya both feel equally supported. Our model is straightforward: free vet advice earns trust, trust drives the first purchase, and a great first purchase earns the second — and the tenth. Margin on goods sustains the business; the advice is how we earn the right to be there. By delivering a fast, responsive web experience that works equally well on a phone in the waiting room and a desktop at home, paired with local e-wallet payments and the repeat purchase behaviours that matter most to Indonesian pet owners, PetSehat is positioned to become the single most trusted place to care for your animal in the country.</p>
+  </div>
+  <div class="note-mock"><strong>v1 Mock:</strong> All content — product listings, vet advice articles, recommendations — is static mock data. No real vet authorship or editorial pipeline exists in v1; content is representative placeholder copy to validate UX flows and visual design.</div>
+</section>
+
+<section id="problem" class="section">
+  <h2 class="section-title">Problem Statement</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Fragmented, uncurated supply</h3>
+      <p>Pet care products in Indonesia are scattered across wet markets, general Tokopedia and Shopee listings, and neighbourhood pet shops with wildly inconsistent stock. There is no specialist channel that curates products by quality, safety, or veterinary relevance. Pet owners are left to guess.</p>
+    </div>
+    <div class="card">
+      <h3>No trustworthy answer before buying</h3>
+      <p>When a new dog owner wants to know which food suits their puppy's breed and age, there is nowhere online to get a confident, expert-backed answer in the same place they shop. Search results return brand marketing. Forums return conflicting opinions. The gap between "I have a question" and "I feel safe buying this" is wide and filled with anxiety.</p>
+    </div>
+    <div class="card">
+      <h3>Vets are trusted but not built for retail</h3>
+      <p>Vet clinics are where Indonesian pet owners go when they want a straight answer — but clinics are not set up for convenient retail. Product selection is narrow, prices are high, and there is no ability to browse, compare, or repurchase online. The most trusted voice in the category is completely absent from ecommerce.</p>
+    </div>
+    <div class="card">
+      <h3>Auto-replenish does not exist for pets</h3>
+      <p>Pet food, flea treatment, and supplements are recurring needs — but no dedicated pet platform in Indonesia offers subscription or auto-replenish. Owners either forget and run out, or over-order to compensate. A frictionless way to set and forget routine purchases simply does not exist in the category.</p>
+    </div>
+  </div>
+  <div class="note-mock"><strong>v1 Mock:</strong> Problem validation is based on secondary research and stakeholder interviews. No in-app user research tooling or feedback collection is implemented in v1; this section informs design decisions only.</div>
+</section>
+
+<section id="goals" class="section">
+  <h2 class="section-title">Goals &amp; Non-Goals</h2>
+  <div class="card">
+    <h3>Goals <span class="tag p0">6-Month Targets</span></h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Goal</th>
+          <th>Metric</th>
+          <th>Target</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Drive loyal, returning buyers</td>
+          <td>90-day repeat purchase rate</td>
+          <td>&ge; 40%</td>
+          <td><span class="tag p0">P0</span></td>
+        </tr>
+        <tr>
+          <td>Establish subscription as a revenue pillar</td>
+          <td>% of purchases from subscribed customers</td>
+          <td>&ge; 25%</td>
+          <td><span class="tag p0">P0</span></td>
+        </tr>
+        <tr>
+          <td>Personalisation adoption</td>
+          <td>Users who create a pet profile before first purchase</td>
+          <td>&ge; 60%</td>
+          <td><span class="tag p0">P0</span></td>
+        </tr>
+        <tr>
+          <td>Customer satisfaction</td>
+          <td>Net Promoter Score (NPS)</td>
+          <td>&ge; 50</td>
+          <td><span class="tag p1">P1</span></td>
+        </tr>
+        <tr>
+          <td>Performance across devices</td>
+          <td>Average page load (mobile 4G &amp; desktop broadband)</td>
+          <td>&lt; 2 seconds</td>
+          <td><span class="tag p0">P0</span></td>
+        </tr>
+        <tr>
+          <td>Advice-to-purchase conversion</td>
+          <td>Users who engage with vet content and buy in-session</td>
+          <td>&ge; 30%</td>
+          <td><span class="tag p0">P0</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Non-Goals — Explicitly Out of Scope for v1</h3>
+    <div class="grid-2">
+      <div>
+        <p><strong>Prescription (Rx) workflow.</strong> Regulatory complexity and fulfilment requirements make a real Rx pipeline a post-launch investment. OTC products only at launch.</p>
+        <p><strong>Cash on delivery (COD).</strong> Logistics, fraud risk, and reconciliation overhead place COD outside v1 scope. E-wallets and virtual accounts cover the majority of Indonesian digital buyers.</p>
+        <p><strong>Native iOS / Android apps.</strong> A responsive web app (phone through desktop) delivers the reach we need at launch without the release cycle overhead. Native app investment follows once core flows are validated.</p>
+      </div>
+      <div>
+        <p><strong>Third-party marketplace / seller model.</strong> We are a direct retailer in v1. Inventory control and quality assurance are non-negotiable at this stage of trust-building.</p>
+        <p><strong>Paid telehealth consultations.</strong> Free advice is the model. Paid teleconsultations introduce a different regulatory and operational surface — deferred post-launch.</p>
+        <p><strong>Live animals, grooming, or boarding.</strong> Physical services require offline infrastructure and licensing we do not have. Out of scope indefinitely for the ecommerce platform.</p>
+      </div>
+    </div>
+  </div>
+  <div class="note-mock"><strong>v1 Mock:</strong> All goal metrics are aspirational targets documented for product intent. No analytics pipeline, event tracking, or reporting dashboard is implemented in v1. Metrics will be validated once a real backend and data layer are in place.</div>
+</section>
+
+<section id="personas" class="section">
+  <h2 class="section-title">Target Customers &amp; Personas</h2>
+  <div class="grid-3">
+    <div class="persona">
+      <div class="persona-name">Rina</div>
+      <div class="persona-role">First-Time Cat Owner · 28 · Jakarta</div>
+      <div class="persona-detail"><strong>Situation:</strong> Office worker at a startup, adopted her first cat six months ago. She relies heavily on Instagram Reels and TikTok for care tips but constantly second-guesses what she reads.</div>
+      <div class="persona-detail"><strong>Motivation:</strong> She wants to do right by her cat and not make an expensive mistake — wrong food, wrong supplement, wrong product. Reassurance matters as much as price.</div>
+      <div class="persona-detail"><strong>Frustrations:</strong> Tokopedia listings have no expert context. She can't tell if a food brand is genuinely good or just well-marketed. Vet visits feel like overkill for a product question.</div>
+      <div class="persona-detail"><strong>How PetSehat helps:</strong> Every product she considers has clear, plain-language vet guidance attached. She sets up a pet profile for her cat and gets recommendations filtered to age and breed. She buys with confidence, not anxiety.</div>
+    </div>
+    <div class="persona">
+      <div class="persona-name">Pak Hendra</div>
+      <div class="persona-role">Multi-Pet Owner · 45 · Surabaya</div>
+      <div class="persona-detail"><strong>Situation:</strong> Business owner with three dogs and a cat. He has the budget to buy quality products but hates the friction of reordering every month across different platforms with inconsistent stock.</div>
+      <div class="persona-detail"><strong>Motivation:</strong> Reliability and trust in the brand. He buys established names and does not want to experiment. Auto-replenish for monthly staples would save him real time.</div>
+      <div class="persona-detail"><strong>Frustrations:</strong> Shopee sellers run out of stock without warning. He has had counterfeit products delivered twice. Managing four animals' needs across multiple carts is genuinely chaotic.</div>
+      <div class="persona-detail"><strong>How PetSehat helps:</strong> Separate pet profiles for each animal. Verified authentic stock from direct suppliers. A single subscription order covers all four pets on a monthly cycle — set once, forget about it.</div>
+    </div>
+    <div class="persona">
+      <div class="persona-name">Fitri</div>
+      <div class="persona-role">Rabbit Owner · 22 · Bandung</div>
+      <div class="persona-detail"><strong>Situation:</strong> University student, tight budget, shares a kost with her rabbit Mochi. Rabbits are niche — most platforms treat them as an afterthought and finding the right hay, pellets, or supplements takes real effort.</div>
+      <div class="persona-detail"><strong>Motivation:</strong> Affordable, reliable guidance she can trust. She does not have money to waste on products that turn out to be wrong for rabbits. She wants to feel like the platform sees her as a real customer, not an edge case.</div>
+      <div class="persona-detail"><strong>Frustrations:</strong> Almost all pet content online is cats and dogs. Vet advice for rabbits is hard to find and often behind a paywall or clinic visit. Shipping costs make small orders painful.</div>
+      <div class="persona-detail"><strong>How PetSehat helps:</strong> A rabbit-specific product catalogue and vet content that actually covers small animals. Free advice means she gets answers without a consultation fee. Pet profile for Mochi surfaces only what is relevant to rabbits — no irrelevant dog food noise.</div>
+    </div>
+  </div>
+  <div class="note-mock"><strong>v1 Mock:</strong> Persona data is based on stakeholder synthesis and secondary research, not usability testing. Pet profile features use static mock data; no real personalisation engine or recommendation algorithm runs in v1.</div>
+</section>
+
+<section id="market" class="section">
+  <h2 class="section-title">Market &amp; Competitive Landscape</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Indonesia Pet Market Context</h3>
+      <p><strong>72 million</strong> pet-owning households nationwide, with penetration highest in Java and growing rapidly in tier-2 cities. The pet care market is expanding at approximately <strong>15% year-on-year</strong>, driven by younger urban owners treating pets as family members rather than livestock.</p>
+      <p>Indonesian internet users are mobile-first, with mid-range Android devices on 4G as the most common access mode — but desktop remains a meaningful surface for considered purchases, research-heavy sessions (comparing foods, reading vet content), and buyers shopping from work or home. GoPay, OVO, Dana, and QRIS together account for the large majority of digital consumer transactions — bank cards lag significantly. Any product built for this market must deliver a first-class responsive experience across phone and desktop, and treat e-wallets as the payment baseline, not an enhancement.</p>
+    </div>
+    <div class="card">
+      <h3>The Gap in the Market</h3>
+      <div class="callout">
+        There is no trusted, mobile-first, vet-curated pet specialist operating in Indonesia today. The category is either too generic (Tokopedia/Shopee) or too inaccessible (vet clinics). PetSehat occupies a position no competitor currently holds.
+      </div>
+      <p>The US market provides a useful proof of concept: Chewy built a multi-billion-dollar business on specialist curation, subscription, and genuine customer care in the pet category. The model translates — Indonesia is earlier in the cycle, which means the opportunity is larger for a first mover who gets the trust layer right.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Competitive Comparison</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th>PetSehat</th>
+          <th>Tokopedia / Shopee</th>
+          <th>Local Vet Clinics</th>
+          <th>Chewy (US)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Vet-backed trust &amp; advice</td>
+          <td><strong>Core feature — free, always on</strong></td>
+          <td>None</td>
+          <td>Yes, but offline only</td>
+          <td>Partial (Connect with a Vet)</td>
+        </tr>
+        <tr>
+          <td>Product curation for pets</td>
+          <td>Specialist catalogue, vet-reviewed</td>
+          <td>Generic marketplace, no curation</td>
+          <td>Narrow, clinic-specific</td>
+          <td>Deep specialist catalogue</td>
+        </tr>
+        <tr>
+          <td>Subscription / auto-replenish</td>
+          <td>Yes — v1 launch feature</td>
+          <td>No dedicated pet subscription</td>
+          <td>No</td>
+          <td>Yes (Autoship)</td>
+        </tr>
+        <tr>
+          <td>Rx / prescription products</td>
+          <td>Deferred — OTC only at launch</td>
+          <td>Unregulated / inconsistent</td>
+          <td>Yes, with consultation</td>
+          <td>Yes (with vet approval)</td>
+        </tr>
+        <tr>
+          <td>Web UX quality (mobile + desktop)</td>
+          <td>Responsive web — purpose-built for both</td>
+          <td>Adequate but generic</td>
+          <td>No digital presence</td>
+          <td>App-first, not Indonesia-relevant</td>
+        </tr>
+        <tr>
+          <td>Indonesia market availability</td>
+          <td>Indonesia-first</td>
+          <td>Yes</td>
+          <td>Yes (local)</td>
+          <td>US only — not available</td>
+        </tr>
+        <tr>
+          <td>Pet profile &amp; personalisation</td>
+          <td>Core — drives all recommendations</td>
+          <td>None</td>
+          <td>Medical records only</td>
+          <td>Basic pet profile</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note-mock"><strong>v1 Mock:</strong> Competitive data is based on secondary research at time of writing. No real-time market intelligence or dynamic competitor tracking is implemented. All product comparisons are for internal planning purposes.</div>
+</section>
+
+<section id="value-prop" class="section">
+  <h2 class="section-title">Value Proposition &amp; Differentiator</h2>
+  <div class="callout">
+    PetSehat's core promise: <strong>shop with the confidence of a vet by your side — for free, every time.</strong> We are not a generic store that happens to sell pet products. We are the place where every buying decision is informed by real veterinary knowledge, available to every pet owner regardless of budget or experience.
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Why free advice is the right model</h3>
+      <p><strong>It converts.</strong> A pet owner who finds the answer to "which food is right for my senior dog?" on PetSehat is far more likely to buy that food from PetSehat than to go back to a generic platform. Advice removes the final hesitation before purchase. This is not charity — it is the most effective conversion mechanism in the category.</p>
+      <p><strong>It builds lasting loyalty.</strong> Trust compounds. A customer who came for advice and had a great experience does not need to be re-acquired next month. They return because PetSehat is where they feel understood. This is how we reach a 40%+ repeat purchase rate — not through discounts, but through genuine expertise.</p>
+    </div>
+    <div class="card">
+      <h3>Why this beats the alternatives</h3>
+      <p><strong>Tokopedia and Shopee cannot replicate it easily.</strong> Generic marketplaces are structurally unable to offer consistent vet-backed guidance at the product level. They have thousands of sellers, no quality control, and no editorial voice. Curation is a moat they cannot build without becoming a different kind of business.</p>
+      <p><strong>It does not add revenue complexity.</strong> Charging for advice would require a payments flow, a scheduling system, regulatory sign-off, and a very different customer expectation to manage. Free advice is operationally simple: we produce it, we publish it, it works. The monetisation happens downstream at the product level where the margin already exists.</p>
+      <p><strong>It is sustainable.</strong> The cost of producing vet-reviewed content is a fixed operational cost that does not scale linearly with transactions. As order volume grows, the advice cost per order falls — while the conversion and retention benefit it delivers remains constant.</p>
+    </div>
+  </div>
+  <div class="note-mock"><strong>v1 Mock:</strong> Vet advice content in v1 is static placeholder copy. No real veterinary authorship, content management system, or expert review workflow is in place. The advice UI and product integration are mocked to validate the design pattern and conversion hypothesis.</div>
+</section>
+
+<section id="business-model" class="section">
+  <h2 class="section-title">Business Model</h2>
+  <div class="card">
+    <h3>Direct retail — own inventory, own margin</h3>
+    <p>PetSehat is a direct retailer. We purchase inventory from suppliers and distributors, hold it in our own fulfilment infrastructure, and sell it at a retail price we control. There are no third-party sellers, no marketplace commission structures, and no revenue sharing. This model gives us full authority over product quality, pricing, stock reliability, and the customer experience from browse to delivery.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Where revenue comes from</h3>
+      <p><strong>Product sales margin only.</strong> Revenue equals the difference between what we pay suppliers and what customers pay us. There is no marketplace take rate, no subscription fee, no advice fee, and no premium tier. Simplicity is deliberate — one clean revenue line is easier to operate and easier for customers to trust.</p>
+      <p>Subscription (auto-replenish) orders are included in product revenue. The subscription mechanic increases order frequency and reduces churn; it does not carry a separate fee. The value to the customer is convenience; the value to PetSehat is predictable, recurring revenue and lower re-acquisition cost.</p>
+    </div>
+    <div class="card">
+      <h3>The unit economics logic</h3>
+      <p><strong>Free advice justifies itself through LTV.</strong> Consider the chain: a user arrives with a question, gets a trustworthy answer on PetSehat, buys the product we recommended, has a good experience, and returns next month. That single advice interaction has acquired a customer who may spend across dozens of orders over several years.</p>
+      <p>Compared to paid acquisition — influencer campaigns, performance ads, promotional discounts — the cost of producing vet content is highly competitive on a cost-per-retained-customer basis. Advice is not a cost centre; it is a low-cost, high-return acquisition and retention channel embedded in the product itself.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <strong>The flywheel:</strong> Free advice builds trust. Trust drives conversion. Conversion funds inventory and content. Better inventory and content attracts more pet owners. More pet owners generate more data for personalisation. Better personalisation drives repeat purchase. Repeat purchase is the North Star. Everything reinforces everything else.
+  </div>
+  <div class="note-mock"><strong>v1 Mock:</strong> No real revenue is generated in v1. The checkout, payment, and order flows use mock data only — no payment gateway is connected, no real transactions are processed, and no financial reporting exists. The business model documented here is the intended real-product design; v1 exists solely to validate UX patterns and user flows against static simulations.</div>
+</section>
+
+    <!-- ===== Execution: Success Metrics (Agent C) ===== -->
+<section id="metrics" class="section">
+  <h2 class="section-title">Success Metrics</h2>
+
+  <div class="card">
+    <h3>North Star Metric</h3>
+    <div class="callout">
+      <strong>90-Day Repeat Purchase Rate</strong> — the percentage of first-time buyers who place a second order within 90 days of their initial purchase. This single metric best represents whether PetSehat is genuinely trusted as a recurring source of pet health products, not just a one-time destination. Target: <strong>40%+ by Month 6</strong>.
+    </div>
+    <p>Measured by: cohort analysis on order timestamps per user ID. A user enters the cohort on their first completed order date. The metric fires when a second completed order exists within the 90-day window.</p>
+  </div>
+
+  <div class="card">
+    <h3>Supporting KPIs</h3>
+    <div class="grid-3">
+      <div class="kpi"><span class="kpi-value">50K</span><span class="kpi-label">Monthly Active Users by Month 6</span></div>
+      <div class="kpi"><span class="kpi-value">3.5%+</span><span class="kpi-label">Product page conversion rate</span></div>
+      <div class="kpi"><span class="kpi-value">Rp 150K+</span><span class="kpi-label">Average Order Value (AOV)</span></div>
+      <div class="kpi"><span class="kpi-value">25%</span><span class="kpi-label">Subscription attach rate among buyers</span></div>
+      <div class="kpi"><span class="kpi-value">60%+</span><span class="kpi-label">Pet profile creation rate among registered users</span></div>
+      <div class="kpi"><span class="kpi-value">30%+</span><span class="kpi-label">Advice-to-purchase conversion (same session)</span></div>
+      <div class="kpi"><span class="kpi-value">&ge; 50</span><span class="kpi-label">Net Promoter Score (NPS)</span></div>
+      <div class="kpi"><span class="kpi-value">70%+</span><span class="kpi-label">3-month subscription retention</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>How Each KPI Is Measured</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>KPI</th>
+          <th>Measurement Method</th>
+          <th>Trigger Event</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>MAU</td>
+          <td>Count of distinct authenticated user IDs (or anonymous device IDs) with at least one session event in the calendar month</td>
+          <td><code>session_start</code></td>
+        </tr>
+        <tr>
+          <td>Conversion Rate</td>
+          <td>Orders completed &divide; product page unique sessions &times; 100, segmented by product and category</td>
+          <td><code>product_view</code> &rarr; <code>order_completed</code></td>
+        </tr>
+        <tr>
+          <td>AOV</td>
+          <td>Total GMV &divide; total completed orders in the period</td>
+          <td><code>order_completed</code> with <code>order_total</code> property</td>
+        </tr>
+        <tr>
+          <td>Subscription attach rate</td>
+          <td>Users with at least one active subscription &divide; users with at least one completed order</td>
+          <td><code>subscription_activated</code></td>
+        </tr>
+        <tr>
+          <td>Pet profile creation rate</td>
+          <td>Registered users who completed pet profile setup &divide; total registered users</td>
+          <td><code>pet_profile_completed</code></td>
+        </tr>
+        <tr>
+          <td>Advice-to-purchase conversion</td>
+          <td>Sessions containing a vet content page view AND an <code>order_completed</code> event within the same session &divide; sessions containing a vet content page view</td>
+          <td><code>vet_content_viewed</code> &rarr; <code>order_completed</code> (same session ID)</td>
+        </tr>
+        <tr>
+          <td>NPS</td>
+          <td>Post-delivery survey (7–14 days after first order); Promoters (9–10) minus Detractors (0–6) as a percentage of total respondents</td>
+          <td>Survey trigger: <code>order_delivered</code> + 7 days</td>
+        </tr>
+        <tr>
+          <td>Subscription retention</td>
+          <td>Subscriptions still active and not paused/cancelled 90 days after activation &divide; subscriptions activated in cohort</td>
+          <td><code>subscription_activated</code> vs. <code>subscription_cancelled</code> / <code>subscription_paused</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Guardrail Metrics</h3>
+    <p>These metrics must not degrade as we optimize for growth. Any experiment or release that moves a guardrail in the wrong direction is automatically blocked from full rollout.</p>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Guardrail</th>
+          <th>Acceptable Threshold</th>
+          <th>Why It Matters</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Page load speed (LCP)</td>
+          <td>Must not exceed 2.5s on 4G mid-range Android</td>
+          <td>Indonesian mobile users on mid-range devices will abandon slow pages; performance is a direct conversion driver</td>
+        </tr>
+        <tr>
+          <td>Checkout completion rate</td>
+          <td>Must not fall below 65% of initiated checkouts</td>
+          <td>A drop here signals UX regression, payment friction, or trust erosion — all fatal to a new brand</td>
+        </tr>
+        <tr>
+          <td>Return and refund rate</td>
+          <td>Must stay below 5% of completed orders</td>
+          <td>High return rates signal catalog quality or product description problems; they also erode unit economics</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note-mock">
+    <strong>v1 Mock:</strong> No real analytics backend exists in Phase 1. To validate the measurement strategy before the backend is live, every meaningful user interaction must fire a stubbed analytics event. Implement a thin <code>analytics.ts</code> module that logs structured event objects to the browser console (e.g., <code>{ event: "product_view", productId: "…", ts: Date.now() }</code>). When Phase 2 introduces a real analytics provider (e.g., Mixpanel or Segment), the same call sites are wired to the real SDK — no page rewrites needed. The event taxonomy defined above is the contract both phases must respect.
+  </div>
+</section>
+
+    <!-- ===== Product scope (Agent B) ===== -->
+<section id="scope" class="section">
+  <h2 class="section-title">Scope — v1 Features</h2>
+
+  <div class="callout">
+    PetSehat v1 is a frontend-only implementation. All features listed below are fully designed and specified as a production product, but run on mock and static data. Each feature includes a mock implementation note describing the v1 approach. Real backend integration is scoped to Phase 2.
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p0">P0</span>
+      <strong style="font-size:1.05rem;">1. Catalog &amp; Browse</strong>
+    </div>
+    <p>Product listing pages organized by category: Food &amp; Nutrition, Health &amp; Meds (OTC only), and Supplies &amp; Accessories. Users can browse by pet type (dog, cat, rabbit, bird, fish), filter by brand, price range, and rating. Category landing pages include vet-curated featured collections and seasonal highlights.</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> Product catalog is a static JSON file (<code>src/data/products.json</code>) containing ~60 representative SKUs across all three categories. Category pages read and render from this file at build time. No inventory levels, stock status, or pricing logic is live — all values are hardcoded in the JSON.</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p0">P0</span>
+      <strong style="font-size:1.05rem;">2. Search &amp; Filters</strong>
+    </div>
+    <p>Keyword search across product names, descriptions, and vet article titles. Faceted filters let users narrow results by pet type, category, brand, price range, and rating. Search results page shows result count, active filter chips with one-tap removal, and a sort selector (relevance, price low–high, price high–low, newest, most reviewed).</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> Search and all filters are implemented entirely client-side using JavaScript array methods against the static product JSON. There is no search index or backend query. Relevance sorting is simulated by product order in the JSON file. Performance is acceptable for a catalog of under 100 items.</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p0">P0</span>
+      <strong style="font-size:1.05rem;">3. Pet Profiles</strong>
+    </div>
+    <p>Users can create up to 5 pet profiles per account. Each profile captures: pet name, species, breed, age (in months or years), weight (kg), sex, spayed/neutered status, and open-text health notes. Profiles are the personalization engine — product recommendations, vet article suggestions, and subscription reminders all reference the active pet profile. Users can switch the active profile from any page via a persistent avatar chip in the header.</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> Pet profiles are created and stored entirely in <code>localStorage</code> under the key <code>petsehat_profiles</code>. Recommendation logic is a simple client-side lookup: species and age bracket map to a curated subset of the static product catalog. No ML or server-side personalization is involved.</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p0">P0</span>
+      <strong style="font-size:1.05rem;">4. Vet-Backed Advice</strong>
+    </div>
+    <p>A content hub featuring: vet-written articles organized by topic (nutrition, preventive care, common symptoms, breed guides), curated product recommendation guides authored by vets, an interactive symptom checker (select pet type &rarr; symptoms &rarr; recommended action and OTC products), and an "Ask Our Vet" async form where users submit a question and receive a confirmation that a vet will respond. This is the primary trust differentiator and is surfaced throughout the product — on the home page, product detail pages, and at checkout.</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> All article and guide content is static markdown or JSON rendered at build time. The symptom checker is a client-side decision tree (static <code>symptom-tree.json</code>). The "Ask Our Vet" form submits to a local state handler and displays a success screen — no email, no ticket, no backend. Vet bylines and credentials are representative placeholder data.</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p0">P0</span>
+      <strong style="font-size:1.05rem;">5. Product Detail Pages</strong>
+    </div>
+    <p>Each product page includes: a photo gallery (swipeable on mobile), full product description, ingredients or specifications, a vet note callout explaining why this product is recommended and for which pets, customer reviews with star rating and pet-type filter, a "Frequently Bought Together" section, quantity selector, and add-to-cart CTA. Products flagged as vet-recommended display a badge throughout the catalog.</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> All product data (photos, descriptions, vet notes, specs) is pulled from the static product JSON. Reviews are a hardcoded array of 4–8 sample reviews per product. "Frequently Bought Together" items are manually curated associations in the JSON. Product images are sourced from Unsplash with static URLs.</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p0">P0</span>
+      <strong style="font-size:1.05rem;">6. Cart &amp; Checkout</strong>
+    </div>
+    <p>Persistent cart accessible from any page. Users can adjust quantities, remove items, apply a promo or coupon code, and see a running total with delivery estimate. Checkout flow: delivery address entry (with saved addresses for logged-in users) &rarr; delivery method selection &rarr; payment method selection &rarr; order review &rarr; confirm. A progress indicator shows the user which step they are on throughout checkout.</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> Cart state is persisted in <code>localStorage</code> under <code>petsehat_cart</code>. Promo codes are validated against a hardcoded list of valid codes in client-side logic (e.g., <code>PETSEHAT10</code> for 10% off). Delivery fees are a static lookup by courier. The checkout flow is a multi-step UI with no real order submission — the final step writes a mock order to <code>localStorage</code> and navigates to a success screen.</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p0">P0</span>
+      <strong style="font-size:1.05rem;">7. Payments</strong>
+    </div>
+    <p>Payment method selection screen supports: GoPay, OVO, Dana, QRIS (scan-to-pay), and Bank Transfer / Virtual Account (BCA, Mandiri, BNI, BRI). Each method shows its logo, a brief instruction, and estimated confirmation time. After selecting a method the user sees a payment instruction screen (e.g., QR code image for QRIS, VA number for bank transfer) with a countdown timer and a "I have paid" CTA that advances the flow.</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> No real payment gateway is integrated. Payment method logos and instruction screens are static UI. The QR code is a static placeholder image. After tapping "I have paid," the app immediately transitions to an order confirmed screen — no webhook, no polling, no real transaction. Payment status in mock order history is always "Paid."</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p1">P1</span>
+      <strong style="font-size:1.05rem;">8. Fulfillment &amp; Courier Tracking</strong>
+    </div>
+    <p>At checkout, users choose a courier from JNE, J&amp;T Express, or SiCepat. Each courier displays estimated delivery days and shipping cost. Post-purchase, an order detail page shows a tracking timeline: Order Confirmed &rarr; Packed &rarr; Picked Up by Courier &rarr; In Transit &rarr; Out for Delivery &rarr; Delivered. Users receive an estimated delivery date displayed prominently on the order page.</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> Courier options and pricing are static lookup tables. The tracking timeline is simulated: mock orders cycle through status stages based on a hardcoded mock timeline (e.g., "Packed" 1 day after order, "In Transit" day 2, "Delivered" day 4). Tracking numbers are randomly generated strings. No real courier API is called.</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p0">P0</span>
+      <strong style="font-size:1.05rem;">9. Accounts &amp; Order History</strong>
+    </div>
+    <p>User registration (name, email, phone, password) and login. Profile page shows: account details, saved delivery addresses, linked pet profiles, and order history. Order history lists past orders with status, items, and total. Each order is tappable to an order detail page with the tracking timeline. Logged-in state persists across sessions.</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> Authentication is fully mocked. A hardcoded mock user (<code>demo@petsehat.id</code> / any password) unlocks the logged-in state stored in <code>localStorage</code>. Registration form submits to a success screen and creates a mock session. Order history is a hardcoded array of 3–5 sample past orders. No real auth provider or database is used.</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p0">P0</span>
+      <strong style="font-size:1.05rem;">10. Subscriptions / Auto-Replenish</strong>
+    </div>
+    <p>Users can subscribe to any eligible product (primarily food and OTC health items) and set a delivery frequency: every 2 weeks, monthly, or every 2 months. The subscription setup flow confirms the first delivery date, payment method, and delivery address. An active subscriptions page lets users pause, change frequency, or cancel. The home page surfaces a personalized "Upcoming Delivery" widget for subscribed users.</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> Subscription creation writes to <code>localStorage</code> under <code>petsehat_subscriptions</code>. The subscription management page reads and mutates this local state. No recurring billing, no scheduled job, and no real future orders are created. The "Upcoming Delivery" date is calculated client-side from the subscription creation date and chosen frequency. Pause and cancel update local state only.</div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <span class="tag p1">P1</span>
+      <strong style="font-size:1.05rem;">11. Ratings &amp; Reviews</strong>
+    </div>
+    <p>Users can leave a review on any purchased product: star rating (1–5), written review (minimum 20 characters), optional photo upload, and pet type tag (so other shoppers can filter by relevant pet). Reviews are surfaced on product detail pages with filters for rating and pet type. An aggregate rating and review count appear on product cards throughout the catalog.</p>
+    <div class="note-mock"><strong>v1 Mock:</strong> Existing reviews are static data in the product JSON. The review submission form validates input client-side and on submit displays a "Thank you for your review" success screen — the new review is not actually appended to any persistent store (it disappears on page refresh). Photo upload accepts a file but does not transmit it anywhere. Aggregate ratings are pre-computed static values in the product JSON.</div>
+  </div>
+</section>
+
+<section id="out-of-scope" class="section">
+  <h2 class="section-title">Out of Scope — v1</h2>
+
+  <div class="callout">
+    The following capabilities are deliberately excluded from v1. Each has a clear rationale and a target phase. This list is binding — any stakeholder request to pull these items into v1 requires a formal scope change and re-prioritization review.
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Why excluded from v1</th>
+        <th>Target Phase</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Prescription (Rx) Workflow</strong></td>
+        <td>Requires regulatory compliance with BPOM and veterinary prescription law in Indonesia, a licensed dispensing workflow, vet verification, and prescription document upload/validation infrastructure. The operational and legal lift is significant and would delay v1 substantially. OTC catalog is sufficient to validate the core commerce loop.</td>
+        <td>Phase 2</td>
+      </tr>
+      <tr>
+        <td><strong>Cash on Delivery (COD)</strong></td>
+        <td>COD requires last-mile courier partners who support cash collection, reconciliation workflows, and a returns/refusal handling process. This is a meaningful operations build that is out of scope for a frontend-only v1. E-wallets and bank transfer cover the majority of Indonesian digital commerce users.</td>
+        <td>Phase 2</td>
+      </tr>
+      <tr>
+        <td><strong>Native iOS &amp; Android Apps</strong></td>
+        <td>Responsive web first (mobile, tablet, and desktop). v1 validates product-market fit, purchase behavior, and repeat rate before investing in native app development. A well-optimized responsive web experience covers the discovery and purchase loops we need to measure across every device.</td>
+        <td>Phase 3</td>
+      </tr>
+      <tr>
+        <td><strong>Third-Party Marketplace / Seller Storefronts</strong></td>
+        <td>Multi-seller inventory introduces catalog quality risk, pricing inconsistency, and fulfillment complexity that conflicts with the vet-backed trust differentiator. PetSehat controls its own inventory in v1 to ensure product authenticity and quality assurance. Marketplace model is a future option after the brand is established.</td>
+        <td>Phase 3</td>
+      </tr>
+      <tr>
+        <td><strong>Paid Telehealth Consultations</strong></td>
+        <td>Monetized vet consultations require licensed veterinarian onboarding, scheduling infrastructure, video call or async messaging tooling, payment for service flows, and potential regulatory licensing for telemedicine in Indonesia. v1 offers free vet-written content as the trust anchor. Paid consults are a natural revenue expansion once the user base is established.</td>
+        <td>Phase 3</td>
+      </tr>
+      <tr>
+        <td><strong>Live Animals</strong></td>
+        <td>Selling live animals involves animal welfare regulations, specialized logistics, health certification, and significant legal liability. This is excluded from the product scope entirely and will be revisited only if the business strategy changes materially.</td>
+        <td>Not planned</td>
+      </tr>
+      <tr>
+        <td><strong>Grooming &amp; Boarding Services</strong></td>
+        <td>Service bookings require scheduling infrastructure, partner onboarding, service provider management, and a fundamentally different fulfillment model from physical goods e-commerce. Out of product scope for the foreseeable roadmap.</td>
+        <td>Not planned</td>
+      </tr>
+      <tr>
+        <td><strong>Real Payment Processing</strong></td>
+        <td>v1 is a frontend-only prototype. Integrating a real payment gateway (Midtrans, Xendit, or similar) requires a backend, webhook handling, fraud rules, and financial compliance. All payment flows in v1 are simulated UI with no real transaction. Live payments ship with the real backend in Phase 2.</td>
+        <td>Phase 2</td>
+      </tr>
+      <tr>
+        <td><strong>Real Backend &amp; Database</strong></td>
+        <td>v1 is explicitly frontend-only to accelerate time-to-feedback. All data persistence is in-browser (<code>localStorage</code>) and all content is static. A real backend — including user auth, order management, inventory, and subscription billing — is the primary engineering investment of Phase 2.</td>
+        <td>Phase 2</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="user-journeys" class="section">
+  <h2 class="section-title">Key User Journeys</h2>
+
+  <div class="callout">
+    These three journeys represent the highest-value flows in v1. Each step maps to a concrete UI screen or interaction. Design and engineering should treat these as the primary acceptance paths for QA and usability testing.
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0; font-family:var(--serif); font-size:1.25rem;">Journey 1: Discovery &rarr; Vet Advice &rarr; First Purchase</h3>
+    <p style="color: var(--muted-foreground); margin-bottom:20px;">Persona: Budi, 29, new cat owner in Jakarta. First visit to PetSehat. Primary need: find the right food for his 8-month-old kitten.</p>
+
+    <ol style="display:flex; flex-direction:column; gap:14px; padding-left:20px;">
+      <li><strong>Home page.</strong> Budi lands on the PetSehat home page. He sees a vet-curated hero banner: "Not sure what to feed your kitten? Our vets have you covered." A prominent CTA reads "Find food for my cat."</li>
+      <li><strong>Pet profile creation.</strong> Tapping the CTA opens a lightweight profile creation modal. Budi enters: species (cat), name (Mochi), breed (Domestic Shorthair), age (8 months), weight (3.2 kg). He saves the profile. This is his first interaction with personalization.</li>
+      <li><strong>Personalized recommendations.</strong> He is taken to a curated product listing page: "Recommended for Mochi." The page shows kitten-appropriate food and health products filtered by Mochi's species and age bracket, each tagged with a vet-approved badge.</li>
+      <li><strong>Vet article.</strong> A content card between rows reads "Why protein content matters for kittens under 12 months." Budi taps it and reads a short vet-authored article (2–3 minute read). At the bottom, the article links back to three specific products with an explanation of why each is appropriate.</li>
+      <li><strong>Product detail page.</strong> Budi taps Royal Canin Kitten Pouch. He reads the description, sees the vet note ("High protein and DHA for brain development — ideal for kittens up to 12 months"), swipes through the photo gallery, and reads four reviews — he filters to "Cat owners" reviews.</li>
+      <li><strong>Add to cart.</strong> Budi selects quantity 3 and taps "Tambah ke Keranjang." A confirmation drawer slides up showing the item in cart with a subtotal. He also adds a recommended dental treat from the "Frequently Bought Together" section.</li>
+      <li><strong>Checkout — address.</strong> Budi proceeds to checkout. He enters his delivery address: Jakarta Selatan, 12930. He selects J&amp;T Express (2–3 days, Rp 18.000).</li>
+      <li><strong>Checkout — payment.</strong> He selects GoPay as his payment method and sees the GoPay payment instruction screen with a deeplink to open GoPay and a "I have paid" button.</li>
+      <li><strong>Order confirmation.</strong> Tapping "I have paid" transitions to the order confirmation screen: order number, estimated delivery date, and a prompt to "Set up auto-replenish so Mochi never runs out." Budi taps "Maybe later" for now.</li>
+    </ol>
+
+    <div class="note-mock"><strong>v1 Mock:</strong> Profile is stored in localStorage. Recommendations are a static filter. The vet article is static content. Cart persists in localStorage. Checkout is a multi-step UI ending in a success screen. No real order is placed. GoPay screen shows a static placeholder.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0; font-family:var(--serif); font-size:1.25rem;">Journey 2: Repeat Replenishment via Subscription</h3>
+    <p style="color: var(--muted-foreground); margin-bottom:20px;">Persona: Sari, 34, returning customer in Surabaya. Has been buying Whiskas monthly. Wants to simplify her routine with auto-replenish.</p>
+
+    <ol style="display:flex; flex-direction:column; gap:14px; padding-left:20px;">
+      <li><strong>Re-engagement entry.</strong> Sari returns to PetSehat 3 weeks after her last order. The home page shows a personalized "Time to reorder?" widget: "Whiskas Adult Tuna 1.2 kg — your usual order. Estimated to run out in 5 days." A single CTA: "Reorder Now."</li>
+      <li><strong>Subscription setup prompt.</strong> Tapping "Reorder Now" adds the item to cart and shows a bottom sheet: "Never run out again. Subscribe and get 5% off every delivery." Options: Every 2 weeks / Monthly / Every 2 months. Sari selects Monthly.</li>
+      <li><strong>Subscription confirmation.</strong> She confirms the subscription: first delivery on her selected date, same address as last order (pre-filled), OVO as payment method. She reviews and taps "Start Subscription."</li>
+      <li><strong>Subscription active screen.</strong> A confirmation screen shows the active subscription: product, frequency, next delivery date, and a link to "Manage Subscriptions."</li>
+      <li><strong>Subscription management page.</strong> Sari navigates to her profile &rarr; Subscriptions. She sees one active subscription card for Whiskas with the next delivery date, a "Pause" option, a "Change Frequency" option, and a "Cancel" option. Everything is clear and requires no guesswork.</li>
+      <li><strong>Browse home page.</strong> Sari returns to the home page. Between her subscription widget and the category grid, she notices a vet tip card: "How to tell if your adult cat is the right weight." She reads it — a light content touchpoint that keeps PetSehat useful between purchases.</li>
+    </ol>
+
+    <div class="note-mock"><strong>v1 Mock:</strong> The "time to reorder" widget uses a static mock trigger based on a hardcoded past order date in the mock user's order history. Subscription state is written to localStorage. Pause, change frequency, and cancel all mutate localStorage. The vet tip card is static content. No notifications are sent.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0; font-family:var(--serif); font-size:1.25rem;">Journey 3: Health Question &rarr; Symptom Checker &rarr; OTC Purchase</h3>
+    <p style="color: var(--muted-foreground); margin-bottom:20px;">Persona: Reza, 26, dog owner in Bandung. His Shiba Inu Kopi has been scratching a lot. He is worried but unsure whether to visit a vet or try something himself first.</p>
+
+    <ol style="display:flex; flex-direction:column; gap:14px; padding-left:20px;">
+      <li><strong>Home page — advice entry.</strong> Reza opens PetSehat. On the home page he sees a section: "Is your pet feeling off? Try our symptom checker — reviewed by vets." He taps it.</li>
+      <li><strong>Symptom checker — pet selection.</strong> The symptom checker opens with a pet type selector. Reza selects "Dog" (or it auto-fills from his saved profile for Kopi). He is presented with a body-area selector: Skin &amp; Coat, Digestion, Eyes &amp; Ears, Behavior, Other.</li>
+      <li><strong>Symptom checker — symptom selection.</strong> He selects "Skin &amp; Coat" &rarr; sees a list of common symptoms &rarr; selects "Excessive scratching" and "Visible fleas or flea dirt."</li>
+      <li><strong>Symptom checker — vet recommendation.</strong> The checker shows a result: "This sounds like a flea infestation, which is common and treatable at home with the right OTC products. We recommend acting quickly — fleas spread fast. No vet visit needed if symptoms are mild. See a vet if scratching causes open wounds or your dog stops eating." Below the text: "Products our vets recommend for this."</li>
+      <li><strong>Curated product list.</strong> Three products are shown: a topical flea treatment spot-on, an anti-flea shampoo, and a flea comb. Each card shows the vet-approved badge, price, and a short note on why it is recommended. Reza taps the spot-on treatment to read more.</li>
+      <li><strong>Product detail.</strong> He reads the product description, the vet note ("Safe for dogs over 8 weeks and 2 kg. Apply monthly. Results visible within 24 hours."), and filters reviews to see feedback from other dog owners. He is reassured.</li>
+      <li><strong>Add to cart and checkout.</strong> Reza adds the spot-on treatment and the shampoo to his cart. He checks out: selects his saved address in Bandung, chooses SiCepat (next day, Rp 15.000), selects QRIS payment, completes the mock payment flow.</li>
+      <li><strong>Order confirmation.</strong> Order confirmed screen shows his two items, estimated delivery tomorrow, and a follow-up content link: "How to prevent fleas coming back — a vet's guide." This closes the loop from health concern to solution to education.</li>
+    </ol>
+
+    <div class="note-mock"><strong>v1 Mock:</strong> The symptom checker is a client-side decision tree (static JSON). Recommended products are a hardcoded mapping from symptom node IDs to product IDs in the static catalog. Cart and checkout are localStorage-based mock flows. Order confirmation is a static success screen.</div>
+  </div>
+</section>
+
+<section id="functional-reqs" class="section">
+  <h2 class="section-title">Functional Requirements</h2>
+
+  <div class="callout">
+    Requirements are written at specification level — concrete, testable, and unambiguous. Each ID is stable and can be referenced in design tickets and QA test cases. Priority tags indicate P0 (launch blocker) and P1 (important but not a launch blocker).
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0; font-family:var(--serif);">Catalog &amp; Search</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Priority</th>
+          <th>v1 Mock Behaviour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-01</td>
+          <td>The catalog must support three top-level categories — Food &amp; Nutrition, Health &amp; Meds, and Supplies &amp; Accessories — each with its own landing page displaying category-specific subcategory navigation and a vet-curated featured section.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Categories and subcategories are defined in a static <code>categories.json</code>. Featured items are a hardcoded array of product IDs per category.</td>
+        </tr>
+        <tr>
+          <td>FR-02</td>
+          <td>Users can filter the product listing by pet species using a multi-select control with options: Dog, Cat, Rabbit, Bird, Fish, and Other Small Animals. The active filter must persist across pagination and be clearable individually or all at once.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Filtering is a client-side array filter on the static product JSON. Each product has a <code>petTypes</code> array field. Filter state is held in React state.</td>
+        </tr>
+        <tr>
+          <td>FR-03</td>
+          <td>Users can filter by price range using a dual-handle slider with Rp 0 to Rp 500.000 range, and can filter by minimum star rating (1–5 stars) using a tappable star selector. Both filters can be applied simultaneously.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Price and rating filters are applied client-side. Min/max price and minRating are fields in the static product JSON. Slider component uses a shadcn/ui Slider primitive.</td>
+        </tr>
+        <tr>
+          <td>FR-04</td>
+          <td>Keyword search must search across product name, brand name, and product description fields. Results must appear within 300 ms of the user stopping typing (debounced). The search results page must display the query term, result count, and an empty state if no results are found with a suggestion to try a broader term.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Debounced client-side string match using <code>String.prototype.includes()</code> across the three fields in the static product JSON. No fuzzy matching in v1.</td>
+        </tr>
+        <tr>
+          <td>FR-05</td>
+          <td>Product listing pages must support sorting by: Relevance (default), Price: Low to High, Price: High to Low, Most Reviewed, and Highest Rated. The selected sort order must be preserved when the user applies or removes filters.</td>
+          <td><span class="tag p1">P1</span></td>
+          <td>Sort is a client-side array sort applied after filtering. Relevance sort order is the original order of items in the static JSON.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-mock"><strong>v1 Mock — Catalog &amp; Search:</strong> The entire product catalog (~60 SKUs) lives in <code>src/data/products.json</code>. All filtering, sorting, and search logic runs in the browser with no network requests. The catalog is loaded once at app initialization and held in React context.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0; font-family:var(--serif);">Pet Profiles</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Priority</th>
+          <th>v1 Mock Behaviour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-06</td>
+          <td>A pet profile must capture the following fields: pet name (text, required), species (dropdown: Dog, Cat, Rabbit, Bird, Fish, Other — required), breed (freetext, optional), age in months (number input, required), weight in kg (number input, optional), sex (Male / Female / Unknown, required), spayed or neutered (Yes / No / Unknown), and health notes (freetext, max 500 characters, optional).</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Form validation is client-side. Submitted profile is serialized to JSON and appended to the <code>petsehat_profiles</code> array in localStorage.</td>
+        </tr>
+        <tr>
+          <td>FR-07</td>
+          <td>A user can create up to 5 pet profiles per account. Attempting to create a sixth must show an inline error: "You can manage up to 5 pets. Remove a profile to add a new one."</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Profile count is checked against the localStorage array length before the creation form is submitted.</td>
+        </tr>
+        <tr>
+          <td>FR-08</td>
+          <td>The active pet profile must be selectable from a persistent header chip showing the pet's name and a species icon. Tapping the chip opens a bottom sheet listing all profiles and an "Add new pet" option. Switching profiles immediately updates all recommendation surfaces on the current page.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Active profile ID is stored in localStorage under <code>petsehat_active_profile</code>. Recommendation surfaces read from React context that subscribes to this value. Switching triggers a context update and component re-render.</td>
+        </tr>
+        <tr>
+          <td>FR-09</td>
+          <td>Recommendations on the home page and category pages must be filtered by the active pet profile's species and age bracket. Age brackets are: Puppy/Kitten (0–12 months), Junior (13–24 months), Adult (25–84 months), Senior (85+ months). Products without a matching pet type are hidden from personalized surfaces but remain discoverable in search and full catalog.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Each product in the static JSON has <code>petTypes</code> (array of species strings) and <code>lifestages</code> (array of bracket strings). The recommendation filter is a client-side intersection of active profile attributes with these fields.</td>
+        </tr>
+        <tr>
+          <td>FR-10</td>
+          <td>Users can edit any field of an existing pet profile and delete a profile. Deleting a profile that is currently active must automatically set the next profile in the list as active, or clear the active profile state if no other profiles exist.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Edit updates the matching object in the localStorage profiles array. Delete splices the object out. Active profile reassignment logic runs client-side after delete.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-mock"><strong>v1 Mock — Pet Profiles:</strong> All profile data is stored in <code>localStorage</code>. There is no server sync, no profile photo upload (avatar is a generated illustration by species), and no profile sharing. Data persists until the user clears browser storage.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0; font-family:var(--serif);">Vet Advice &amp; Content</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Priority</th>
+          <th>v1 Mock Behaviour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-11</td>
+          <td>The vet advice hub must list articles organized by topic: Nutrition, Preventive Care, Common Symptoms, and Breed Guides. Each article must display: title, vet author name and credentials, estimated read time, publication date, associated pet types, and a cover image. Users can filter the article list by pet type.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Articles are static JSON objects in <code>src/data/articles.json</code> with all required fields hardcoded. Cover images are Unsplash URLs. Filtering is client-side.</td>
+        </tr>
+        <tr>
+          <td>FR-12</td>
+          <td>The symptom checker must support at minimum: 3 pet species (Dog, Cat, Rabbit), 5 body areas per species, and at least 3 symptoms per body area. Each terminal node in the decision tree must output: a plain-language assessment, a recommendation to see a vet (yes/no/maybe), and 0–3 linked OTC product recommendations from the catalog.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>The decision tree is a static JSON file (<code>src/data/symptom-tree.json</code>). Terminal nodes reference product IDs from the product catalog. The UI renders the tree level by level as a series of tappable option cards.</td>
+        </tr>
+        <tr>
+          <td>FR-13</td>
+          <td>Product detail pages must display a vet note section when a note is available for that product. The vet note must include: the note text (max 250 characters), the vet's first name and credential abbreviation (e.g., "drh. Anika"), and a "Vet Approved" badge on the product card in listing pages.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Vet notes are a field in the static product JSON (<code>vetNote: { text, vetName, credential }</code>). Products without a vet note do not show the section or badge. All vet names are representative placeholder data.</td>
+        </tr>
+        <tr>
+          <td>FR-14</td>
+          <td>The "Ask Our Vet" form must collect: user name (pre-filled if logged in), pet species (dropdown), question text (minimum 30 characters, maximum 800 characters), and an optional photo attachment. On submit, the user must see a confirmation screen stating their question has been received and a vet will respond within 2 business days.</td>
+          <td><span class="tag p1">P1</span></td>
+          <td>Form validates input client-side. On submit, the form state is cleared and the UI navigates to a static success screen. No data is transmitted anywhere. Photo attachment is accepted by the file input but not processed.</td>
+        </tr>
+        <tr>
+          <td>FR-15</td>
+          <td>Vet-curated product guides must be linkable from product detail pages, article pages, and the symptom checker results screen. A guide presents a curated list of products with vet commentary for a specific use case (e.g., "Best foods for senior dogs," "Starting a kitten on solids").</td>
+          <td><span class="tag p1">P1</span></td>
+          <td>Guides are static JSON objects containing a title, vet author, intro text, and an ordered list of product ID references. The guide page component renders these by looking up products in the main catalog JSON.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-mock"><strong>v1 Mock — Vet Advice &amp; Content:</strong> All content (articles, guides, symptom trees) is static data authored before launch and bundled with the frontend. No CMS integration exists in v1. Content updates require a code deployment. "Ask Our Vet" submissions are not stored or forwarded.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0; font-family:var(--serif);">Cart &amp; Checkout</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Priority</th>
+          <th>v1 Mock Behaviour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-16</td>
+          <td>Users can add any product to the cart from a product detail page or from a product card using a quantity selector (minimum 1, maximum 99). Adding a product that is already in the cart increments the quantity rather than creating a duplicate line item. A cart icon in the header shows the total item count as a badge.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Cart state is an array in localStorage (<code>petsehat_cart</code>). Add-to-cart logic checks for an existing entry by product ID and either inserts or increments. Header badge reads the cart array length.</td>
+        </tr>
+        <tr>
+          <td>FR-17</td>
+          <td>The cart page must display each line item with: product image, name, unit price, quantity stepper, line total, and a remove button. It must show an order summary: subtotal, delivery fee (calculated after courier selection), discount (if a valid promo code is applied), and grand total. Promo code input must show an inline error for invalid codes and an inline success message with the discount amount for valid ones.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Cart page renders from localStorage. Delivery fee is Rp 0 until a courier is selected in checkout. Promo code validation checks against a hardcoded list: <code>PETSEHAT10</code> (10% off), <code>GRATIS5</code> (Rp 5.000 off). Invalid codes show "Kode promo tidak ditemukan."</td>
+        </tr>
+        <tr>
+          <td>FR-18</td>
+          <td>Checkout step 1 (Delivery Address) must allow users to enter a new address with fields: recipient name, phone number, full street address, subdistrict (kelurahan), district (kecamatan), city/regency, province, and postal code. Logged-in users with a saved address must see it pre-selected with an option to use a different address.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Address entered during checkout is stored to the mock user's profile in localStorage. Saved address is read from the mock user object in localStorage. Province and city dropdowns use a static Indonesian region JSON file.</td>
+        </tr>
+        <tr>
+          <td>FR-19</td>
+          <td>Checkout step 2 (Delivery Method) must show at least three courier options — JNE, J&amp;T Express, and SiCepat — each displaying the estimated delivery time in business days and the shipping cost in Rupiah. The selected courier must update the delivery fee in the order summary.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Courier options are a static lookup object keyed by courier code. Pricing is hardcoded (e.g., JNE Rp 18.000 / 2–3 days, SiCepat Rp 15.000 / 1–2 days, J&amp;T Rp 16.000 / 2–3 days). No weight-based or distance-based calculation.</td>
+        </tr>
+        <tr>
+          <td>FR-20</td>
+          <td>Checkout step 3 (Payment Method) must present the available payment options as tappable cards with the payment provider logo and a one-line description. Options: GoPay, OVO, Dana, QRIS, and Bank Transfer — Virtual Account (with sub-selection: BCA, Mandiri, BNI, BRI). Only one payment method may be selected at a time.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Payment method selection updates a local state variable. Payment provider logos are static SVG assets. VA bank sub-selection shows an additional radio group when Bank Transfer is selected.</td>
+        </tr>
+        <tr>
+          <td>FR-21</td>
+          <td>Checkout step 4 (Order Review) must display a full summary: itemized product list with quantities and prices, selected delivery address, selected courier and fee, applied discount (if any), payment method, and grand total. A clearly labeled "Place Order" CTA must be reachable without excessive scrolling on a standard mobile screen (375px width) and clearly visible within the layout on tablet and desktop widths.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Order review reads all selections from local checkout state. "Place Order" writes a mock order object to the <code>petsehat_orders</code> array in localStorage, clears the cart, and navigates to the confirmation screen.</td>
+        </tr>
+        <tr>
+          <td>FR-22</td>
+          <td>The order confirmation screen must display: a success visual, the order number (formatted as <code>PS-YYYYMMDD-XXXXX</code>), estimated delivery date, a summary of items ordered, and two CTAs: "Track Order" (links to order detail) and "Continue Shopping" (returns to home page).</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Order number is generated client-side using today's date and a random 5-digit number. Estimated delivery date is calculated from today plus the courier's delivery days (static). The confirmation screen reads the just-written mock order from localStorage.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-mock"><strong>v1 Mock — Cart &amp; Checkout:</strong> The entire checkout flow is a multi-step UI with no backend calls. All state is managed in React state during the session and written to localStorage at the "Place Order" step. Cart persists across sessions via localStorage. No real order is created, no stock is decremented, and no confirmation email is sent.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0; font-family:var(--serif);">Payments</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Priority</th>
+          <th>v1 Mock Behaviour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-23</td>
+          <td>After selecting GoPay, OVO, or Dana as payment method, the payment instruction screen must show: the provider logo, the total amount due formatted in Rupiah with thousand separators, a 15-minute countdown timer, instructions to open the respective e-wallet app, and a primary CTA "I Have Paid."</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>The countdown timer is a real client-side countdown starting at 15:00. After the timer reaches 0, a message appears: "Payment window expired. Please restart checkout." In v1, tapping "I Have Paid" at any point during the countdown advances to the order confirmation screen immediately.</td>
+        </tr>
+        <tr>
+          <td>FR-24</td>
+          <td>After selecting QRIS as payment method, the payment instruction screen must show: a QR code image (minimum 250&times;250px), the total amount, a 15-minute countdown, and instructions to scan using any QRIS-compatible app. The QR code must be scalable via a "Zoom" button that opens it in a full-screen modal.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>The QR code is a static placeholder PNG at the required dimensions. The image is the same for all transactions — it does not encode any real payment data. The zoom modal uses a shadcn/ui Dialog component.</td>
+        </tr>
+        <tr>
+          <td>FR-25</td>
+          <td>After selecting Bank Transfer / Virtual Account, the user must select their preferred bank (BCA, Mandiri, BNI, BRI). The instruction screen must show: the bank logo, a virtual account number (formatted for readability), the exact amount to transfer (must match the order total to the Rupiah, with a note that incorrect amounts will not be processed), and step-by-step transfer instructions for ATM, mobile banking, and internet banking — selectable via tabs.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>VA numbers are randomly generated 16-digit strings prefixed by a bank-specific code (e.g., BCA VAs start with 70012). Instruction tabs are static content. Transfer amount matches the mock order total. "I Have Paid" advances to confirmation.</td>
+        </tr>
+        <tr>
+          <td>FR-26</td>
+          <td>The payment instruction screen must include a "Change Payment Method" link that returns the user to the payment method selection step without losing their cart or delivery details.</td>
+          <td><span class="tag p1">P1</span></td>
+          <td>Tapping "Change Payment Method" navigates back to the checkout payment step. Checkout state (address, courier, cart) is preserved in React state during the session. Since checkout state is not persisted to localStorage until "Place Order," a hard browser refresh will lose checkout progress — acceptable in v1.</td>
+        </tr>
+        <tr>
+          <td>FR-27</td>
+          <td>If the payment window expires (15-minute timer reaches 0), the user must see an expiry screen with the message that their order is pending, the payment window has closed, and a CTA to retry payment. Retrying must regenerate a new payment code or QR and restart the timer.</td>
+          <td><span class="tag p1">P1</span></td>
+          <td>On timer expiry the UI shows a static expiry screen. The "Retry Payment" CTA resets the countdown timer to 15:00 and generates a new random VA number or uses the same QR placeholder. No backend state changes.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-mock"><strong>v1 Mock — Payments:</strong> No payment gateway (Midtrans, Xendit, or otherwise) is integrated. All payment screens are static UI. No money moves. "I Have Paid" always succeeds. Payment status in order history is always "Paid." Real payment integration is the primary financial infrastructure milestone of Phase 2.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0; font-family:var(--serif);">Accounts &amp; Orders</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Priority</th>
+          <th>v1 Mock Behaviour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-28</td>
+          <td>Registration form must collect: full name, email address, Indonesian mobile phone number (validated for 08xx/62xx format), and password (minimum 8 characters, must contain at least one letter and one number). A confirmation checkbox for terms of service and privacy policy is required before submission. On success, the user is logged in immediately and redirected to their profile page.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>All validation is client-side. On submit, a mock user object is written to localStorage and a logged-in session flag is set. No email verification is sent. The hardcoded demo account (<code>demo@petsehat.id</code> with any password) bypasses registration and logs in directly.</td>
+        </tr>
+        <tr>
+          <td>FR-29</td>
+          <td>Login must support email + password authentication. A "Forgot Password" link must be present on the login page and lead to a password reset flow that accepts an email address. Logged-in state must persist across browser sessions until the user explicitly logs out.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Login checks the entered email against the mock user in localStorage. Any password is accepted for the demo account. "Forgot Password" shows a static "We've sent a reset link to your email" success screen without sending anything. Session flag persists in localStorage.</td>
+        </tr>
+        <tr>
+          <td>FR-30</td>
+          <td>The profile page must display and allow editing of: full name, email address, phone number, and up to 3 saved delivery addresses. Each saved address has a label (Home, Office, Other) and can be set as default. The profile page also shows a link to the pet profiles section and account settings (language, notification preferences).</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Profile data is read from and written to the mock user object in localStorage. Address CRUD updates the addresses array within that object. Language and notification preference toggles update localStorage but have no functional effect on the v1 UI.</td>
+        </tr>
+        <tr>
+          <td>FR-31</td>
+          <td>The order history page must list all past orders in reverse chronological order, showing: order number, order date, total amount, order status (one of: Payment Pending, Processing, Packed, In Transit, Delivered, Cancelled), a thumbnail of the first item, and a count of additional items if more than one. Tapping an order opens the order detail page.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Order history is read from the <code>petsehat_orders</code> array in localStorage, seeded with 3–5 hardcoded past orders for the demo account. Orders placed during the v1 session are appended to this array on checkout completion.</td>
+        </tr>
+        <tr>
+          <td>FR-32</td>
+          <td>The order detail page must display: all items and quantities, delivery address, courier name and estimated delivery, payment method, order total breakdown, and a tracking timeline showing each status stage with a timestamp. A "Buy Again" CTA must allow the user to re-add all items from that order to the current cart in one tap.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Tracking timeline statuses and timestamps are generated from the order date using a static offset schedule (e.g., Packed = order date + 6 hours, In Transit = + 1 day). "Buy Again" reads product IDs from the mock order and calls the same add-to-cart logic used on product pages.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-mock"><strong>v1 Mock — Accounts &amp; Orders:</strong> Authentication is entirely client-side with no real auth provider. The demo account credentials are hardcoded. All user data (profile, addresses, order history) is stored in localStorage. Logging out clears the session flag but not the profile data, so re-login restores the previous state.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0; font-family:var(--serif);">Subscriptions</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Priority</th>
+          <th>v1 Mock Behaviour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-33</td>
+          <td>Any product tagged as <code>subscriptionEligible: true</code> in the catalog must display a "Subscribe &amp; Save" option on its product detail page alongside the standard add-to-cart flow. The subscription option must show the available frequencies and the discount applied for subscribing (5% off each delivery). Selecting subscription and tapping "Subscribe" must initiate the subscription setup flow.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td><code>subscriptionEligible</code> is a boolean field in the static product JSON. The 5% discount is applied client-side to the unit price in the subscription summary. The subscription setup flow is a separate multi-step sheet/page.</td>
+        </tr>
+        <tr>
+          <td>FR-34</td>
+          <td>The subscription setup flow must collect: delivery frequency (Every 2 Weeks, Monthly, Every 2 Months — presented as selectable cards, not a dropdown), delivery address (pre-filled from default saved address, editable), and payment method (same options as checkout). The final step shows a subscription summary with the first delivery date and recurring total before the user confirms.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>First delivery date is calculated as today + 1 day. Subsequent delivery dates are client-side calculations from the first delivery date plus the chosen frequency in days (14, 30, or 60). On confirm, the subscription object is written to <code>petsehat_subscriptions</code> in localStorage.</td>
+        </tr>
+        <tr>
+          <td>FR-35</td>
+          <td>The Subscriptions management page (accessible from the user profile) must list all active subscriptions, each showing: product image, name, quantity, frequency, next delivery date, delivery address, and payment method. For each subscription, users must be able to: pause (skip the next delivery), change frequency, update quantity, and cancel. Pausing must update the next delivery date to the following cycle.</td>
+          <td><span class="tag p0">P0</span></td>
+          <td>Subscription management reads from and mutates the <code>petsehat_subscriptions</code> array in localStorage. Pause toggles a <code>paused</code> boolean and adjusts the <code>nextDeliveryDate</code> field. Cancel sets <code>status: "cancelled"</code> and removes the subscription from the active list UI. No recurring billing exists.</td>
+        </tr>
+        <tr>
+          <td>FR-36</td>
+          <td>The home page must show an "Upcoming Delivery" widget for users with at least one active subscription. The widget must display: the product name, quantity, next delivery date (in DD MMMM YYYY format in Indonesian locale), and a CTA to manage the subscription. If multiple subscriptions are active, the widget shows the one with the soonest next delivery date.</td>
+          <td><span class="tag p1">P1</span></td>
+          <td>The widget reads from localStorage on home page load. It sorts active subscriptions by <code>nextDeliveryDate</code> ascending and renders the first result. Date formatting uses the browser's <code>Intl.DateTimeFormat</code> API with <code>id-ID</code> locale.</td>
+        </tr>
+        <tr>
+          <td>FR-37</td>
+          <td>When a user cancels a subscription, the system must display a cancellation confirmation modal that shows the product name, next delivery date that will no longer occur, and two CTAs: "Pause Instead" (as a softer alternative) and "Confirm Cancellation." After confirming, the subscription must move to a "Past Subscriptions" section on the management page with its cancellation date recorded.</td>
+          <td><span class="tag p1">P1</span></td>
+          <td>Cancellation confirmation is a shadcn/ui AlertDialog. "Pause Instead" closes the dialog and sets <code>paused: true</code>. "Confirm Cancellation" sets <code>status: "cancelled"</code> and records <code>cancelledAt</code> as the current timestamp in the localStorage object. Past subscriptions are filtered by <code>status === "cancelled"</code> and shown in a collapsed section below active subscriptions.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-mock"><strong>v1 Mock — Subscriptions:</strong> The subscription system is entirely client-side. No recurring billing, scheduled jobs, or future order creation exists. Delivery dates are calculated values that update when the user interacts with the management page. There is no notification system — the "Upcoming Delivery" home widget is the only reminder mechanism in v1. Real subscription billing infrastructure is a Phase 2 backend requirement.</div>
+  </div>
+</section>
+
+    <!-- ===== Execution: NFR, Tech, Roadmap, Risks, Open Q, Appendix (Agent C) ===== -->
+<section id="nfr" class="section">
+  <h2 class="section-title">Non-Functional Requirements</h2>
+
+  <div class="card">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Requirement</th>
+          <th>Target</th>
+          <th>Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3"><strong>Performance</strong></td>
+          <td>Time to First Contentful Paint (FCP)</td>
+          <td>&lt; 2s on 4G mid-range Android</td>
+          <td>The majority of Indonesian users access the web on sub-flagship Android devices over variable 4G. If the first visible content takes more than 2 seconds, a significant portion will leave before the page is useful.</td>
+        </tr>
+        <tr>
+          <td>Largest Contentful Paint (LCP)</td>
+          <td>&lt; 2.5s</td>
+          <td>Google Core Web Vitals threshold. Scores above 2.5s hurt both user experience and organic search ranking — both critical for a new brand with no paid acquisition budget at launch.</td>
+        </tr>
+        <tr>
+          <td>Total JavaScript bundle size</td>
+          <td>&lt; 500KB gzipped</td>
+          <td>Keeps initial load fast on constrained connections and limits data usage for users on metered mobile plans, which is common in Indonesia.</td>
+        </tr>
+        <tr>
+          <td rowspan="3"><strong>Accessibility</strong></td>
+          <td>WCAG 2.1 AA compliance</td>
+          <td>Full compliance across all pages</td>
+          <td>Accessibility is a legal and ethical baseline. It also improves usability for all users, including those on low-end screens or in poor lighting conditions.</td>
+        </tr>
+        <tr>
+          <td>Keyboard navigation and screen-reader labels</td>
+          <td>All interactive elements must be reachable and labelled</td>
+          <td>Screen readers are used across disability spectrums. Proper ARIA labelling also improves SEO and is required for WCAG AA.</td>
+        </tr>
+        <tr>
+          <td>Color contrast ratios</td>
+          <td>AA minimum (4.5:1 for normal text, 3:1 for large text)</td>
+          <td>The coral primary and honey yellow accent palette must be validated against backgrounds. Do not assume brand colors are inherently accessible — test every combination.</td>
+        </tr>
+        <tr>
+          <td rowspan="3"><strong>Localization</strong></td>
+          <td>Default language</td>
+          <td>Bahasa Indonesia; English toggle available</td>
+          <td>The primary market is Indonesia. All default copy, labels, and error messages must be in Bahasa Indonesia. English support serves bilingual users and international stakeholders reviewing the mock.</td>
+        </tr>
+        <tr>
+          <td>Price formatting</td>
+          <td>All prices in IDR, formatted as Rp 150.000 (period as thousands separator)</td>
+          <td>Indonesian convention uses a period (.) as the thousands separator and a comma (,) for decimals. Deviating from this creates confusion and signals an un-localized product.</td>
+        </tr>
+        <tr>
+          <td>Date formatting</td>
+          <td>DD/MM/YYYY throughout</td>
+          <td>Indonesian date convention. Using MM/DD/YYYY (US format) or ISO 8601 in UI copy creates ambiguity for local users.</td>
+        </tr>
+        <tr>
+          <td rowspan="4"><strong>Security</strong></td>
+          <td>HTTPS everywhere</td>
+          <td>All pages and assets served over TLS 1.2+; HTTP requests redirect to HTTPS</td>
+          <td>Required baseline for any commerce platform. Also required by most payment gateways as a precondition for integration.</td>
+        </tr>
+        <tr>
+          <td>No PII in client-side storage beyond session</td>
+          <td>localStorage and cookies must not persist sensitive personal data after session ends</td>
+          <td>Reduces breach surface. PII stored in browser storage is accessible to XSS attacks and third-party scripts.</td>
+        </tr>
+        <tr>
+          <td>Payment method data never stored by platform</td>
+          <td>Card and e-wallet tokens handled exclusively by the payment gateway (Midtrans); PetSehat stores only the transaction reference</td>
+          <td>PCI-DSS compliance and liability reduction. Storing raw payment credentials is both illegal and operationally dangerous for a startup.</td>
+        </tr>
+        <tr>
+          <td>UU PDP compliance (Indonesian Personal Data Protection Law)</td>
+          <td>Data collection consent, right-to-erasure support, and data processing disclosures in place before real user data is collected</td>
+          <td>Indonesia's UU PDP (Law No. 27/2022) came into force in 2024. Non-compliance carries financial penalties and reputational damage in a market where PetSehat is building a trust brand.</td>
+        </tr>
+        <tr>
+          <td rowspan="6"><strong>Responsive Web</strong></td>
+          <td>Supported viewport range</td>
+          <td>Fully functional and readable from 360px (small phone) through 1440px+ (desktop); fluid layouts, no fixed-width-only pages</td>
+          <td>The product must be first-class on both phone and desktop. 360px is the smallest common Android viewport; desktop sessions are common for research-heavy, considered purchases. Neither end of the range is a second-class citizen.</td>
+        </tr>
+        <tr>
+          <td>Defined breakpoints</td>
+          <td>Mobile (&lt; 640px), tablet (640–1023px), desktop (&ge; 1024px); content reflows — single column on mobile, multi-column grids and a persistent sidebar/nav on desktop</td>
+          <td>Tailwind's default breakpoints. Desktop should use the extra width meaningfully (e.g., product grid columns, side-by-side filters and results, wider content), not just center a stretched mobile layout.</td>
+        </tr>
+        <tr>
+          <td>Content max-width on desktop</td>
+          <td>Primary content constrained to a comfortable reading/scanning max-width (~1280px) and centered; no full-bleed line lengths for body text</td>
+          <td>Unconstrained text on a 1440px+ monitor is fatiguing to read. Desktop layouts need deliberate max-widths and gutters, not edge-to-edge content.</td>
+        </tr>
+        <tr>
+          <td>Touch &amp; pointer parity</td>
+          <td>Touch targets minimum 44&times;44px on mobile; equivalent click affordances and hover/focus states on desktop; no functionality locked behind hover-only</td>
+          <td>Touchscreens have no hover state, so nothing critical may hide behind hover; desktop users expect hover and keyboard focus cues. Both input models must reach every action.</td>
+        </tr>
+        <tr>
+          <td>Navigation pattern adapts</td>
+          <td>Bottom tab bar / hamburger on mobile; persistent top nav and (where useful) sidebar on desktop</td>
+          <td>Mobile and desktop have different ergonomics for navigation. A single pattern forced onto both compromises one of them; the layout should adapt the chrome to the viewport.</td>
+        </tr>
+        <tr>
+          <td>PWA: manifest and service worker</td>
+          <td>Valid Web App Manifest; service worker caches visited product and content pages for offline browsing</td>
+          <td>Adds to home screen / installable capability and offline resilience — meaningful in areas with intermittent connectivity, on both mobile and desktop browsers.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note-mock">
+    <strong>v1 Mock:</strong> The following NFRs apply in full from day one of the mock build — they are not deferred to Phase 2: <strong>Performance</strong> (LCP and bundle size targets must be met in the mock; these are habits, not afterthoughts), <strong>Accessibility</strong> (WCAG AA must be built in, not retrofitted), and <strong>Responsive Web</strong> (the full 360px–1440px+ range, defined breakpoints, adaptive navigation, touch targets, no hover-only interactions, PWA manifest). Every screen must be reviewed at mobile, tablet, and desktop widths during the mock build. Security NFRs are partially applicable: HTTPS applies the moment the mock is deployed to any public URL. Client-side PII storage rules apply even in mock (localStorage must not store sensitive data). Payment security and UU PDP are documented here but enforced only once Phase 2 introduces real user data and payment flows. Localization in mock: all Bahasa Indonesia copy and IDR formatting should be implemented; the English toggle can be stubbed as a UI control that is wired in Phase 2.
+  </div>
+</section>
+
+<section id="tech-approach" class="section">
+  <h2 class="section-title">Technical Approach &amp; Constraints (v1: Frontend-Only Mock)</h2>
+
+  <div class="card">
+    <h3>What "Frontend-Only Mock" Means</h3>
+    <p>In Phase 1, PetSehat runs entirely inside the user's browser. There is no backend server, no database, no real payment processing, and no live API. Every screen, flow, and interaction is powered by static data and browser-native storage. A person using the app sees a fully interactive, visually complete product — but behind the scenes, nothing persists to a server and no money changes hands.</p>
+    <p>This is a deliberate product strategy, not a technical limitation. It lets the team validate the most important unknowns (does vet-backed trust convert? do pet profiles feel worth filling in? does the subscription upsell land?) before spending months building a production backend.</p>
+  </div>
+
+  <div class="card">
+    <h3>Data Layer</h3>
+    <p>All data that a real backend would serve is instead defined as static JSON files or TypeScript arrays within the codebase. This includes the product catalog (names, prices, images, descriptions, category tags), pet profiles (species, breed, age, health notes), vet advice articles, order history, and subscription plans. There are no API calls in v1. Components import data directly or read from a local data module.</p>
+    <p>The data shapes used in Phase 1 must match the API response shapes planned for Phase 2. This is non-negotiable: if the mock uses a <code>product.price</code> field as a number in IDR cents, the real API must return the same field with the same semantics. Divergence here forces UI rewrites in Phase 2.</p>
+  </div>
+
+  <div class="card">
+    <h3>Simulated User Flows</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Flow</th>
+          <th>How It Is Simulated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Shopping cart</td>
+          <td>Cart state is stored in <code>localStorage</code>. Items persist across page refreshes. Cart totals, quantity changes, and item removal all work as in a real app.</td>
+        </tr>
+        <tr>
+          <td>Checkout and payment</td>
+          <td>All payment method screens (GoPay, OVO, Dana, QRIS, Virtual Account) are rendered as full UI with realistic copy and QR/VA number placeholders. On confirmation, the flow ends on a real-looking order success screen. No actual charge occurs.</td>
+        </tr>
+        <tr>
+          <td>Order tracking</td>
+          <td>A mock order timeline (Pesanan Dikonfirmasi &rarr; Dikemas &rarr; Dikirim &rarr; Terkirim) is displayed with hardcoded timestamps relative to the mock order date. The courier tracking number is a static placeholder string.</td>
+        </tr>
+        <tr>
+          <td>Pet profiles</td>
+          <td>Profile creation and editing writes to <code>localStorage</code>. Personalized product recommendations are driven by a client-side filtering function applied to the static catalog using the saved pet profile data.</td>
+        </tr>
+        <tr>
+          <td>Subscriptions and auto-replenish</td>
+          <td>The full subscription setup flow is interactive: users pick a product, select a frequency (weekly/monthly), and confirm. The subscription is saved to <code>localStorage</code>. The subscription management screen reads and renders this data. No recurring charge logic runs.</td>
+        </tr>
+        <tr>
+          <td>Vet advice and "Ask a Vet"</td>
+          <td>Vet articles are static content. The "Ask our vet" form collects the user's question and displays a confirmation message ("Pertanyaanmu sudah kami terima — tim dokter hewan kami akan menghubungimu dalam 1&times;24 jam"). No message is sent anywhere.</td>
+        </tr>
+        <tr>
+          <td>User authentication</td>
+          <td>Login and registration forms are rendered as real UI. On submit, a mock user object is written to <code>sessionStorage</code> and the user is shown as logged in for the session. No passwords are verified.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Tech Stack</h3>
+    <div class="grid-2">
+      <div>
+        <p><span class="tag p0">Core</span> <strong>TanStack Start</strong> — React 19 with file-based routing via TanStack Router, server-rendered through Vite and Nitro. Chosen for its first-class TypeScript support, fast HMR, and the clean separation between route files that mirrors how feature teams will think about pages.</p>
+        <p><span class="tag p0">Core</span> <strong>Tailwind CSS v4</strong> — utility-first styling with the design token system (coral primary, honey yellow accent, Geist and Fraunces typefaces) defined as CSS custom properties and surfaced through Tailwind's <code>@theme</code>. Keeps styling consistent and refactorable.</p>
+      </div>
+      <div>
+        <p><span class="tag p0">Core</span> <strong>shadcn/ui (new-york, Base UI)</strong> — accessible, unstyled-first component primitives that compose with Tailwind. Used for all interactive UI (dialogs, sheets, tabs, selects, forms), with responsive variants where the pattern differs by viewport (e.g., a bottom Sheet on mobile, a side Dialog on desktop). Never replaced with custom components where shadcn has an equivalent.</p>
+        <p><span class="tag p1">Tooling</span> <strong>Biome 2.x</strong> — linting and formatting in a single tool. Enforces tabs, double quotes, and import organization. Runs in CI to prevent style drift.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Why This Approach De-Risks the Project</h3>
+    <p>Building a full ecommerce backend before validating the core product hypothesis is an expensive bet. PetSehat's core hypothesis is that vet-backed trust, not price or selection, drives repeat purchase in the Indonesian pet health market. A frontend mock lets the team test that hypothesis with real users in weeks, not months.</p>
+    <p>Specifically, this approach lets the product team run usability tests on the full end-to-end flow; gives the vet content team a real surface to review and critique; allows the business team to demo to investors with a working product; and gives engineering a clear, tested UX target before writing a line of backend code. The risk of "building the wrong thing" is dramatically reduced before any infrastructure cost is committed.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Mock-to-Real Migration Path</strong><br><br>
+    When Phase 2 begins, the migration from mock to real follows a layered replacement strategy — not a rewrite.<br><br>
+    <strong>Step 1 — Data layer:</strong> Replace static JSON imports with API client calls (e.g., <code>fetchProducts()</code> instead of <code>import products from './data/products.json'</code>). Because the data shapes are identical, component code does not change.<br><br>
+    <strong>Step 2 — Auth:</strong> Replace <code>sessionStorage</code> mock auth with a real JWT/session flow. The login and registration UI already exists and just needs its submit handlers wired to real endpoints.<br><br>
+    <strong>Step 3 — Cart and orders:</strong> Replace <code>localStorage</code> cart with server-side cart (linked to authenticated user). Order completion flow calls the real order API instead of writing to local storage.<br><br>
+    <strong>Step 4 — Payments:</strong> Wire payment method selection screens to the Midtrans SDK. The UI screens are already built; they just need real transaction tokens from the backend.<br><br>
+    <strong>Step 5 — Analytics:</strong> Replace console-log event stubs with real Segment/Mixpanel SDK calls. Event names and properties are already defined and standardized in Phase 1.<br><br>
+    No page-level UI rewrites are required if Phase 1 is built to the data contracts above.
+  </div>
+
+  <div class="card">
+    <h3>What Must Be Production-Quality Even in the Mock</h3>
+    <p>The following are not "we'll fix it later" items. They must meet real-product standards from the first day of development:</p>
+    <ul>
+      <li><strong>Performance:</strong> LCP under 2.5s, bundle under 500KB gzipped. Measured with Lighthouse on a simulated mid-range Android device in Chrome DevTools before any merge to main.</li>
+      <li><strong>Accessibility:</strong> WCAG 2.1 AA. Every new component ships with proper ARIA attributes, keyboard navigation, and color contrast validation.</li>
+      <li><strong>Responsive UX:</strong> Every screen designed and tested across the full range — mobile (360px), tablet, and desktop (1280px+). No horizontal overflow at any width, no hover-only states, no tap targets smaller than 44px, and desktop layouts that use the extra space deliberately rather than stretching a mobile layout.</li>
+      <li><strong>Analytics event stubs:</strong> Every meaningful user interaction fires a structured event to the analytics stub. The event taxonomy is defined in the metrics section and must be followed exactly.</li>
+    </ul>
+  </div>
+
+  <div class="note-mock">
+    <strong>v1 Mock:</strong> This entire section describes the v1 architecture. The mock is the Phase 1 deliverable. All flows documented in this PRD are built as interactive browser experiences backed by static data and localStorage. The word "mock" does not mean low-fidelity — it means no server. Visual quality, UX quality, performance, and accessibility are held to production standards throughout.
+  </div>
+</section>
+
+<section id="roadmap" class="section">
+  <h2 class="section-title">Release Plan &amp; Phased Roadmap</h2>
+
+  <div class="phase-block">
+    <div class="phase-label">Phase 1 — Frontend Mock</div>
+    <div class="phase-items">
+      <p><strong>Timeline:</strong> Now through Month 3</p>
+      <p><strong>Goal:</strong> Validate the UX, the vet-trust concept, and all key user flows with real users and stakeholders — before any backend investment is made.</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>Deliverables</strong></p>
+          <ul>
+            <li>Full responsive web frontend (mobile, tablet, and desktop) built in TanStack Start with all 11 v1 feature areas implemented as interactive mock screens</li>
+            <li>Product catalog browsing and search (static data, client-side filtering)</li>
+            <li>Pet profile creation and management (localStorage)</li>
+            <li>Personalized product recommendations driven by pet profile</li>
+            <li>Cart, checkout, and payment method selection flows (UI-complete, mock confirmation)</li>
+            <li>Subscription and auto-replenish setup and management screens</li>
+            <li>Vet advice content hub with article pages and "Ask a Vet" form</li>
+            <li>Order history and mock tracking timeline</li>
+            <li>Analytics event stubs wired to all key interactions</li>
+            <li>PWA manifest and basic service worker</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Success Criteria</strong></p>
+          <ul>
+            <li>40%+ of usability test participants report that vet advice content influenced their mock purchase decision</li>
+            <li>NPS &ge; 50 from moderated usability test sessions</li>
+            <li>All Lighthouse scores green on both mid-range Android simulation and desktop (LCP &lt; 2.5s, no accessibility violations); every key screen verified at mobile, tablet, and desktop widths</li>
+            <li>Product, vet team, and investors aligned on flows after demo — no major UX pivots required entering Phase 2</li>
+          </ul>
+          <div class="callout">
+            Phase 1 exit gate: stakeholder sign-off on all flows and usability test results meeting the success criteria above. Phase 2 backend work does not begin until this gate is passed.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-label">Phase 2 — Real Commerce Backend</div>
+    <div class="phase-items">
+      <p><strong>Timeline:</strong> Month 3 through Month 8</p>
+      <p><strong>Goal:</strong> Convert the validated mock into a production-grade ecommerce platform capable of processing real transactions and retaining real customers.</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>Deliverables</strong></p>
+          <ul>
+            <li>Real product catalog and inventory management backend</li>
+            <li>User authentication, accounts, and saved pet profiles (server-persisted)</li>
+            <li>Real cart, order processing, and fulfillment integration with courier partners</li>
+            <li>GoPay, OVO, Dana, QRIS, and Virtual Account payments live via Midtrans</li>
+            <li>Basic COD (Cash on Delivery) option for Tier 1-2 cities</li>
+            <li>Vet advice content CMS for the in-house vet team to publish and update articles</li>
+            <li>Real search powered by Typesense or Algolia</li>
+            <li>Subscription billing and auto-replenish with real recurring payment handling</li>
+            <li>Real analytics pipeline replacing console-log stubs</li>
+            <li>UU PDP compliance: consent flows, data processing disclosures, erasure support</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Success Criteria</strong></p>
+          <ul>
+            <li>First 1,000 real completed transactions processed without critical incidents</li>
+            <li>90-day repeat purchase rate reaches 40%+ within the first buyer cohort</li>
+            <li>Checkout completion rate &ge; 65%</li>
+            <li>Zero critical security incidents in the first 90 days of live operation</li>
+          </ul>
+          <div class="callout">
+            The Phase 1 mock is the exact UI target for Phase 2. No page-level redesigns should be needed — only data layer replacement, as described in the technical approach section.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-label">Phase 3 — Growth &amp; Expansion</div>
+    <div class="phase-items">
+      <p><strong>Timeline:</strong> Month 8 onward</p>
+      <p><strong>Goal:</strong> Deepen retention among existing customers, expand the product and service offering, and explore platform and distribution growth.</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>Deliverables</strong></p>
+          <ul>
+            <li>Prescription (Rx) medication workflow: vet verification, prescription upload, dispensing compliance</li>
+            <li>Native iOS and Android apps (React Native or PWA-to-app wrapper, to be decided)</li>
+            <li>Paid telehealth consultations: live video or async chat with licensed vets, fee-based</li>
+            <li>Loyalty and rewards program tied to repeat purchase and subscription milestones</li>
+            <li>Expanded payment methods: installment options (BNPL), additional e-wallets</li>
+            <li>Potential marketplace expansion: curated third-party seller program with quality controls</li>
+            <li>Tier 3 city expansion: logistics partnerships and COD coverage expansion</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Success Criteria</strong></p>
+          <ul>
+            <li>MAU reaches 150K</li>
+            <li>Subscription attach rate reaches 40%+ of active buyers</li>
+            <li>NPS sustained &ge; 55</li>
+            <li>Telehealth consultations available in at least 5 major Indonesian cities</li>
+          </ul>
+          <p><em>Note: Phase 3 scope is directional. Priorities will be re-evaluated based on Phase 2 learnings, user research, and market conditions at the time.</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="risks" class="section">
+  <h2 class="section-title">Risks &amp; Mitigations</h2>
+
+  <div class="card">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Risk</th>
+          <th>Likelihood</th>
+          <th>Impact</th>
+          <th>Mitigation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Vet sourcing:</strong> difficulty finding and retaining licensed vets (drh.) to produce and maintain advice content at the required volume and quality</td>
+          <td>Medium</td>
+          <td>High — vet-backed trust is the core differentiator; without credible vet voices, the entire brand positioning collapses</td>
+          <td>Begin vet partnership outreach in Phase 1, in parallel with mock build. Explore part-time freelance model with 3–5 founding vet contributors. Create a lightweight content brief template to reduce per-article effort. Negotiate exclusivity clauses carefully to allow vets to maintain their primary practice.</td>
+        </tr>
+        <tr>
+          <td><strong>Mock-to-real gap:</strong> UX validated in Phase 1, but backend complexity (payments, inventory, fulfillment) delays the Phase 2 real launch beyond Month 8</td>
+          <td>Medium</td>
+          <td>High — extended mock period risks losing early adopter interest and competitive window</td>
+          <td>Enforce data contract discipline in Phase 1 (mock data shapes must match planned API shapes). Begin backend architecture design in Month 2 so engineering can start Phase 2 the day Phase 1 gates are passed. Set a hard Phase 2 kickoff date as a team commitment, not a "when mock is done" trigger.</td>
+        </tr>
+        <tr>
+          <td><strong>Logistics reliability:</strong> courier partners (JNE, SiCepat, J&amp;T) have inconsistent service levels in Tier 2 and Tier 3 Indonesian cities, leading to delayed or lost orders</td>
+          <td>High</td>
+          <td>Medium — logistics failures directly damage trust and repeat purchase rate, but are partially outside PetSehat's control</td>
+          <td>Launch Phase 2 restricted to Tier 1 cities (Jakarta, Surabaya, Bandung, Medan) where courier reliability is higher. Integrate multiple courier options and implement real-time rate/availability comparison at checkout. Set clear delivery time expectations in product UI — underpromise and overdeliver. Build a proactive order exception notification flow.</td>
+        </tr>
+        <tr>
+          <td><strong>Cold-start catalog:</strong> insufficient product range at launch means users visit, find nothing for their pet's specific needs, and leave without purchasing</td>
+          <td>Medium</td>
+          <td>Medium — conversion will be suppressed until the catalog reaches critical mass for each pet category</td>
+          <td>Prioritize depth over breadth: launch with 150–200 SKUs covering the top 20% of product types that account for 80% of pet health spend (staple foods, flea/tick treatments, basic supplements). Use Phase 1 usability testing to identify the most-requested missing categories and fill those first in Phase 2.</td>
+        </tr>
+        <tr>
+          <td><strong>Customer trust:</strong> PetSehat is an unknown brand competing for attention on the same devices as established Tokopedia and Shopee storefronts where users already buy pet supplies</td>
+          <td>High</td>
+          <td>High — without a trust differentiation that is felt in the first visit, acquisition economics will be unsustainable</td>
+          <td>The vet-trust content strategy is the primary mitigation — it must be present and prominent from day one, not added later. Collect and display social proof aggressively from the first real transactions. Consider a "Verified by Dokter Hewan" badge system for product recommendations. Invest in direct community engagement (pet owner Facebook groups, Instagram) rather than paid acquisition early on.</td>
+        </tr>
+        <tr>
+          <td><strong>Payment friction:</strong> e-wallet adoption is strong in Tier 1 cities but uneven nationally; COD is expected by a significant portion of Indonesian online shoppers and is deferred to Phase 2</td>
+          <td>Medium</td>
+          <td>Medium — users who expect COD and do not find it will abandon checkout, suppressing conversion for the first cohorts</td>
+          <td>Communicate clearly in Phase 2 launch messaging which payment methods are available. Prioritize QRIS (universal QR) which covers multiple e-wallets in one scan. Fast-track basic COD to early Phase 2 for Tier 1 cities. Monitor checkout abandonment by payment method step to identify the friction point precisely.</td>
+        </tr>
+        <tr>
+          <td><strong>Pet profile adoption:</strong> users skip the pet profile creation step, undermining the personalization engine that is central to PetSehat's product experience</td>
+          <td>Medium</td>
+          <td>Medium — without profile data, recommendations are generic, NPS suffers, and the product feels like any other pet store</td>
+          <td>Make the value of the profile immediately visible: show personalized recommendations the moment a profile is created, before any purchase. Keep the creation flow to under 60 seconds (3–4 questions). Offer a concrete incentive for first-time profile creation (e.g., a discount on the first recommended product). Test skippable vs. mandatory profile in usability sessions during Phase 1.</td>
+        </tr>
+        <tr>
+          <td><strong>UU PDP compliance:</strong> Indonesia's Personal Data Protection Law (UU No. 27/2022) imposes consent, transparency, and data subject rights requirements that must be met before PetSehat collects real user data</td>
+          <td>Low (in Phase 1) / High (Phase 2)</td>
+          <td>High — non-compliance penalties plus reputational damage to a trust-brand are disproportionately severe</td>
+          <td>Engage an Indonesian tech-focused legal counsel in Month 2 to produce a UU PDP compliance checklist. Build consent flows, privacy policy, and data processing disclosures into Phase 2 design specs during Phase 1, so they are ready at launch. Do not collect real personal data in the mock — localStorage data in Phase 1 is not subject to UU PDP, but prepare the architecture as if it will be.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="open-questions" class="section">
+  <h2 class="section-title">Open Questions</h2>
+
+  <div class="card">
+    <p>The following questions are unresolved at the time of this PRD. Each must have a decision before or during the Phase 2 build. Leaving them open past the deadlines indicated creates downstream design, legal, or engineering risk.</p>
+
+    <ol>
+      <li>
+        <strong>Vet sourcing model: in-house employees or freelance contributors?</strong> An in-house vet team gives content quality control and exclusivity but adds significant headcount cost. A freelance model is cheaper and faster to spin up but harder to standardize and retain. Which model do we use at launch, and what is the minimum viable vet team size to seed the content library?
+        <br><em>Decision owner: CEO / Head of Content. Deadline: Month 1.</em>
+      </li>
+      <li>
+        <strong>Content localization depth: full Bahasa Indonesia content or bilingual from day one?</strong> Writing all vet content natively in Bahasa Indonesia is the right choice for the primary audience, but it constrains which vet contributors can write for us. Should we accept English drafts and translate, or require Indonesian-language production throughout?
+        <br><em>Decision owner: Head of Content. Deadline: Month 2.</em>
+      </li>
+      <li>
+        <strong>Courier partner selection: which carriers do we integrate first, and how do we handle multi-carrier fulfillment?</strong> JNE, SiCepat, J&amp;T, and AnterAja all have different coverage maps, rate structures, and API quality. Do we negotiate direct contracts or use an aggregator API (e.g., Shipper, Biteship) to abstract carrier selection?
+        <br><em>Decision owner: Head of Operations. Deadline: Month 4 (before Phase 2 fulfillment build begins).</em>
+      </li>
+      <li>
+        <strong>Mock-to-real data migration strategy: how do we handle Phase 1 test users who want to carry their data into Phase 2?</strong> If usability testers create pet profiles and "orders" in the mock, do we offer a way to migrate their data into real accounts when Phase 2 launches? This affects both the technical architecture and the onboarding email strategy.
+        <br><em>Decision owner: Product Lead + Engineering Lead. Deadline: Month 2.</em>
+      </li>
+      <li>
+        <strong>Pricing strategy vs. Tokopedia and Shopee storefronts: do we compete on price, or hold margin and compete on trust?</strong> Most pet products are already available on Tokopedia, often at thin-margin prices. PetSehat's vet-trust positioning justifies a small premium, but we need a defined pricing policy before catalog pricing begins. What is our target gross margin floor per category?
+        <br><em>Decision owner: CEO / Head of Commercial. Deadline: Month 3.</em>
+      </li>
+      <li>
+        <strong>COD timeline: when exactly in Phase 2 do we launch Cash on Delivery, and for which cities?</strong> COD is deferred from v1 but is a real barrier for a meaningful portion of Indonesian shoppers. Delaying it too long will suppress conversion in Phase 2. We need a specific month and city list, not "later."
+        <br><em>Decision owner: Head of Operations. Deadline: Month 3.</em>
+      </li>
+      <li>
+        <strong>UU PDP legal review: do we need a Data Protection Officer (DPO) and when must one be appointed?</strong> UU No. 27/2022 may require the appointment of a DPO depending on the volume and sensitivity of personal data processed. This needs a formal legal opinion before Phase 2 collects real user data.
+        <br><em>Decision owner: CEO + Legal Counsel. Deadline: Month 2.</em>
+      </li>
+      <li>
+        <strong>Subscription payment failure handling: what happens when an auto-replenish charge fails?</strong> E-wallet balances can be insufficient at the time of a recurring charge. Do we retry automatically, notify the user and pause, or cancel the subscription? The policy affects both the backend payment flow design and the user-facing subscription management UI.
+        <br><em>Decision owner: Product Lead + Head of Payments. Deadline: Month 4.</em>
+      </li>
+      <li>
+        <strong>Search architecture: Typesense (self-hosted) or Algolia (SaaS) for Phase 2?</strong> Both support Indonesian language tokenization and typo tolerance. Typesense is open-source and cheaper at scale; Algolia is faster to integrate and has better managed infrastructure. The choice affects both Phase 2 build time and ongoing infrastructure cost.
+        <br><em>Decision owner: Engineering Lead. Deadline: Month 3.</em>
+      </li>
+      <li>
+        <strong>Loyalty and rewards program design: should a basic rewards mechanic launch with Phase 2 or be deferred to Phase 3?</strong> A points-for-purchase system launched alongside the real store could accelerate the repeat purchase rate from day one. But it adds design, backend, and legal complexity (points can be considered a financial instrument under certain Indonesian regulations). Does the expected retention lift justify the Phase 2 scope addition?
+        <br><em>Decision owner: CEO / Head of Growth. Deadline: Month 4.</em>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section id="appendix" class="section">
+  <h2 class="section-title">Appendix: Glossary &amp; Assumptions</h2>
+
+  <div class="card">
+    <h3>Glossary</h3>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Term</th>
+          <th>Definition</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>OTC</strong></td>
+          <td>Over-the-Counter. Medications and health products that can be purchased without a veterinary prescription. PetSehat's Phase 1 and Phase 2 catalog is OTC-only.</td>
+        </tr>
+        <tr>
+          <td><strong>Rx</strong></td>
+          <td>Prescription. Medications that legally require a licensed veterinarian's prescription before dispensing. Deferred to Phase 3 due to the regulatory and verification workflow complexity involved.</td>
+        </tr>
+        <tr>
+          <td><strong>AOV</strong></td>
+          <td>Average Order Value. Total revenue from completed orders divided by the number of completed orders in a given period. A key indicator of basket health and upsell effectiveness.</td>
+        </tr>
+        <tr>
+          <td><strong>LTV</strong></td>
+          <td>Lifetime Value (or Customer Lifetime Value, CLV). The total net revenue a customer is expected to generate over their entire relationship with PetSehat. Drives decisions about customer acquisition cost ceilings.</td>
+        </tr>
+        <tr>
+          <td><strong>NPS</strong></td>
+          <td>Net Promoter Score. A customer loyalty metric derived from asking users "How likely are you to recommend PetSehat to a friend?" on a 0–10 scale. Promoters (9–10) minus Detractors (0–6) as a percentage of total respondents.</td>
+        </tr>
+        <tr>
+          <td><strong>GMV</strong></td>
+          <td>Gross Merchandise Value. The total value of all goods sold through the platform before deducting returns, discounts, or platform costs. A top-line volume indicator.</td>
+        </tr>
+        <tr>
+          <td><strong>MAU</strong></td>
+          <td>Monthly Active Users. The count of distinct users who have at least one recorded session within a calendar month. The primary measure of platform reach and engagement breadth.</td>
+        </tr>
+        <tr>
+          <td><strong>PWA</strong></td>
+          <td>Progressive Web App. A web application that uses modern browser APIs to deliver app-like experiences: installability to the home screen, offline support via service workers, and push notifications. PetSehat targets PWA compliance from Phase 1.</td>
+        </tr>
+        <tr>
+          <td><strong>LCP</strong></td>
+          <td>Largest Contentful Paint. A Core Web Vitals metric that measures when the largest visible content element in the viewport (typically a hero image or headline) finishes rendering. Target: under 2.5 seconds.</td>
+        </tr>
+        <tr>
+          <td><strong>CLS</strong></td>
+          <td>Cumulative Layout Shift. A Core Web Vitals metric measuring unexpected visual movement of page content during load. High CLS creates a jarring experience where buttons or links move as the user attempts to tap them.</td>
+        </tr>
+        <tr>
+          <td><strong>VA (Virtual Account)</strong></td>
+          <td>Virtual Account. A bank-issued temporary account number used for one-time payments in Indonesia. The user transfers the exact order amount to the VA number within a time window. Widely used for users without e-wallets.</td>
+        </tr>
+        <tr>
+          <td><strong>QRIS</strong></td>
+          <td>Quick Response Code Indonesian Standard. Bank Indonesia's national QR payment standard that unifies GoPay, OVO, Dana, ShopeePay, and bank mobile apps into a single scannable code. Launched nationally in 2019 and widely adopted in retail and online commerce.</td>
+        </tr>
+        <tr>
+          <td><strong>UU PDP</strong></td>
+          <td>Undang-Undang Perlindungan Data Pribadi (Personal Data Protection Law), Indonesian Law No. 27 of 2022. Governs how personal data of Indonesian residents may be collected, processed, and stored. Came into full effect in 2024.</td>
+        </tr>
+        <tr>
+          <td><strong>Auto-replenish / Subscription</strong></td>
+          <td>A recurring purchase arrangement where the user authorizes PetSehat to automatically charge and ship a selected product on a defined schedule (e.g., every 30 days). Used interchangeably in this PRD. Designed to drive repeat purchase rate and reduce customer churn on consumable products like pet food and flea treatments.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Assumptions</h3>
+    <p>This PRD is built on the following assumptions. If any of these prove false, the relevant sections should be revisited before Phase 2 build begins.</p>
+    <ol>
+      <li>Indonesian pet owners shop across both phones and desktops — phones for quick and on-the-go purchases, desktops for research-heavy and considered ones. A responsive web app (no native app install barrier) reaches the full addressable market across both surfaces.</li>
+      <li>GoPay, OVO, and Dana have sufficient penetration among smartphone-owning pet owners in Tier 1 and Tier 2 Indonesian cities to make e-wallet-first payment viable at launch. COD can be deferred without blocking the first meaningful buyer cohort.</li>
+      <li>Vet-backed product recommendations and health content represent a genuine, unmet trust gap in the current Indonesian pet product market — one that mainstream platforms (Tokopedia, Shopee) are not positioned to fill credibly.</li>
+      <li>Licensed Indonesian veterinarians (drh.) are willing to contribute content to a commercial platform in exchange for reasonable compensation and visibility, and can be sourced within the Phase 1 timeline.</li>
+      <li>The primary pet categories at launch (dogs and cats) account for the large majority of addressable spend. Exotic pet categories (reptiles, birds, fish) can be deferred without materially limiting the initial market.</li>
+      <li>A frontend-only mock with realistic flows and real-looking UI is sufficient to generate valid user behavior signal in usability testing. Users will engage with the mock as if it were a real purchasing environment.</li>
+      <li>TanStack Start (React 19 + Vite + Nitro) is a stable enough foundation for a production ecommerce frontend. No migration to a different framework will be needed between Phase 1 and Phase 2.</li>
+      <li>Midtrans is the appropriate payment gateway for Phase 2 given its Indonesian market coverage, GoPay/OVO/Dana integrations, and virtual account support. No significant integration risk is assumed.</li>
+      <li>Indonesian pet owners are increasingly comfortable purchasing health-related pet products online, including OTC medications and supplements. Regulatory barriers to OTC online pet health product sales in Indonesia will not materially change before Phase 2 launch.</li>
+      <li>The 90-day repeat purchase rate is a leading indicator of LTV and brand loyalty in this category. Optimizing for this metric will directionally improve all other business outcomes including GMV and subscription attach rate.</li>
+      <li>PetSehat will not face material intellectual property or brand conflict issues with the name, domain, or visual identity in the Indonesian market. Legal clearance is assumed to have been completed or will be completed before Phase 2 launch.</li>
+    </ol>
+  </div>
+</section>
+
+    <footer class="doc-footer">
+      <p>PetSehat — Product Requirements Document · Version 1.0 (Draft) · 23 May 2026 · Confidential, internal planning use only.</p>
+    </footer>
+
+  </main>
+</div>
+</body>
+</html>

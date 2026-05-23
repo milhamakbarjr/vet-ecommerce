@@ -5,12 +5,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 - `pnpm dev` — start dev server on port 3000
-- `pnpm build` — production build (Vite + Nitro, output in `dist/`)
+- `pnpm build` — production build (Vite + Nitro, output in `.output/`)
 - `pnpm preview` — preview the production build
 - `pnpm test` — run Vitest once (`pnpm test -- <pattern>` to filter, `pnpm exec vitest` for watch mode)
 - `pnpm check` — Biome lint + format check (also `pnpm lint`, `pnpm format`)
 
-Production server: `node dist/server/index.mjs` after `pnpm build`.
+Production server: `node .output/server/index.mjs` after `pnpm build` (respects `PORT`, defaults to 3000). Nitro emits the deployable artifact to `.output/` using the default node-server preset; set `NITRO_PRESET` for a specific host (e.g. `vercel`, `cloudflare`).
 
 ## Architecture
 
